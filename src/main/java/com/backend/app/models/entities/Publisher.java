@@ -57,5 +57,6 @@ public class Publisher {
     private String updatedBy;
 
     @OneToMany(mappedBy = "publisher")
+    @JsonIgnore
     private List<Book> book;
 }
