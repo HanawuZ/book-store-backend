@@ -36,7 +36,7 @@ public class Book {
     private String genre;
 
     @Column(name = "publication_year")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     private LocalDate publicationYear;
 
     @Column(name = "copies_available")
@@ -71,5 +71,6 @@ public class Book {
 
     @JsonProperty("updatedBy")
     @Column(name = "updated_by")
+    @JsonIgnore
     private String updatedBy;
 }

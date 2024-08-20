@@ -42,13 +42,14 @@ public class Author {
     private String lastname;
 
     @JsonProperty("dob")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     @Column(name = "dob")
     @Nullable
     private LocalDate dob;
 
     @JsonProperty("createdDate")
     @Column(name = "created_date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private Timestamp createdDate;
 
     @JsonProperty("createdBy")
@@ -57,6 +58,7 @@ public class Author {
 
     @JsonProperty("updatedDate")
     @Column(name = "updated_date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private Timestamp updatedDate;
 
     @JsonProperty("updatedBy")

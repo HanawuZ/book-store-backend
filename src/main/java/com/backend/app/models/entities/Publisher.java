@@ -3,6 +3,7 @@ package com.backend.app.models.entities;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -42,6 +43,7 @@ public class Publisher {
 
     @JsonProperty("createdDate")
     @Column(name = "created_date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private Timestamp createdDate;
 
     @JsonProperty("createdBy")
@@ -50,6 +52,7 @@ public class Publisher {
 
     @JsonProperty("updatedDate")
     @Column(name = "updated_date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private Timestamp updatedDate;
 
     @JsonProperty("updatedBy")
