@@ -1,7 +1,10 @@
 package com.backend.app.models.entities;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
+
+import org.springframework.data.redis.core.RedisHash;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,7 +21,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "publishers")
-public class Publisher {
+public class Publisher implements Serializable {
 
     @Id
     @JsonProperty("id")

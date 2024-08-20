@@ -1,7 +1,9 @@
 package com.backend.app.models.entities;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Set;
+
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,7 +23,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "books")
-public class Book {
+public class Book implements Serializable{
     @Id
     @Column(name = "id")
     private String id;

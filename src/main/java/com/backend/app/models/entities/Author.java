@@ -1,8 +1,11 @@
 package com.backend.app.models.entities;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Set;
+
+import org.springframework.data.redis.core.RedisHash;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,7 +22,7 @@ import jakarta.annotation.Nullable;
 @Entity
 @Data
 @Table(name = "authors")
-public class Author {
+public class Author implements Serializable{
     
     @Id
     @JsonProperty("id")
