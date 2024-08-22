@@ -19,6 +19,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import org.springframework.data.redis.core.index.Indexed;
 
 @Data
 @Entity
@@ -29,6 +30,7 @@ public class Book implements Serializable{
     private String id;
 
     @Column(unique = true, name = "isbn")
+    @Indexed
     private String isbn;
 
     @Column(name = "title")
@@ -59,8 +61,10 @@ public class Book implements Serializable{
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 
+
     @JsonProperty("createdDate")
     @Column(name = "created_date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private Timestamp createdDate;
 
     @JsonProperty("createdBy")
@@ -69,6 +73,7 @@ public class Book implements Serializable{
 
     @JsonProperty("updatedDate")
     @Column(name = "updated_date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private Timestamp updatedDate;
 
     @JsonProperty("updatedBy")
