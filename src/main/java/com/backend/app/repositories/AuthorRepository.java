@@ -2,35 +2,15 @@ package com.backend.app.repositories;
 
 import java.util.List;
 import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import com.backend.app.models.entities.Author;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 
 @Repository
-public class AuthorRepository {
+public interface AuthorRepository extends CrudRepository<Author, String> {
     
-    private EntityManager entityManager;
-
-    @Autowired
-    public AuthorRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
-
-    public List<Author> getAuthors(Set<String> authorIds) {
-        try {
-            Query query = entityManager.createNativeQuery("SELECT * FROM authors WHERE id IN (:authorIds)", Author.class)
-                    .setParameter("authorIds", authorIds);
-            List<Author> result =  query.getResultList();
-            return result;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
-        }
-    }
+    @Query("SELECT a FROM Author a WHERE a.id IN (:authorIds)")
+    List<Author> getAuthors(Set<String> authorIds);
 }
+

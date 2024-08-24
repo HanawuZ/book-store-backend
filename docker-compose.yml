@@ -1,6 +1,5 @@
 version: '3.8'
 
-# redis-cli -h localhost -p 6380
 services:
   redis:
     image: redis:latest
@@ -23,7 +22,6 @@ services:
     networks:
       - redis-example
 
-# set network name redis-example
 networks:
   redis-example:
     name: redis-example

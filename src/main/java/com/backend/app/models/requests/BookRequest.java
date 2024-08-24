@@ -11,6 +11,10 @@ import lombok.Data;
 
 @Data
 public class BookRequest {
+
+    @JsonProperty("id")
+    private String id;
+
     @JsonProperty("isbn")
     private String isbn;
     
@@ -30,7 +34,10 @@ public class BookRequest {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private String publicationYear;
     
+    @JsonProperty("copiesAvailable")
     private int copiesAvailable;
+
+    @JsonProperty("price")
     private double price;
 
     public LocalDate getPublicationYear() {

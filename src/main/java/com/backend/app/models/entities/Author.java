@@ -70,5 +70,5 @@ public class Author implements Serializable{
 
     @ManyToMany(mappedBy = "authors")
     @JsonIgnore
-    Set<Book> books;
+    private Set<Book> books;
 }

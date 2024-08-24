@@ -1,34 +1,26 @@
 package com.backend.app.configs;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import jakarta.persistence.EntityManagerFactory;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@EnableTransactionManagement
-@EnableRedisRepositories
 public class ApplicationConfig {
 
-    @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-        return new JpaTransactionManager(entityManagerFactory);
-    }
+    // @Bean
+    // public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+    //     return new JpaTransactionManager(entityManagerFactory);
+    // }
 
     @Bean
     public RedisConnectionFactory jedisConnectionFactory() {

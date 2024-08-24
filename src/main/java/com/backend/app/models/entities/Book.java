@@ -3,12 +3,14 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.List;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -49,13 +51,13 @@ public class Book implements Serializable{
     @Column(name = "price")
     private Double price;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
         name = "book_authors", 
         joinColumns = @JoinColumn(name = "book_id"), 
         inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-    private Set<Author> authors;
+    private List<Author> authors;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "publisher_id")
@@ -64,7 +66,6 @@ public class Book implements Serializable{
 
     @JsonProperty("createdDate")
     @Column(name = "created_date")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private Timestamp createdDate;
 
     @JsonProperty("createdBy")
@@ -73,11 +74,9 @@ public class Book implements Serializable{
 
     @JsonProperty("updatedDate")
     @Column(name = "updated_date")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private Timestamp updatedDate;
 
     @JsonProperty("updatedBy")
     @Column(name = "updated_by")
-    @JsonIgnore
     private String updatedBy;
 }

@@ -5,51 +5,29 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import org.json.JSONArray;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 public class RedisHashUtil {
 
-    private RedisTemplate<Object, Object> redisTemplate;
-    private String keyPrefix = "";
-    private HashOperations<Object, Object, Object> hashOperations;
+    private final RedisTemplate<Object, Object> redisTemplate;
+    private final HashOperations<Object, Object, Object> hashOperations;
 
     public RedisHashUtil() {
-        this.redisTemplate = new RedisTemplate<>();
-        hashOperations =  this.redisTemplate.opsForHash();
+        this(new RedisTemplate<>());
     }
 
     public RedisHashUtil(RedisTemplate<Object, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
-        hashOperations = this.redisTemplate.opsForHash();
+        this.hashOperations = this.redisTemplate.opsForHash();
     }
 
-    public RedisHashUtil setKeyPrefix(String keyPrefix) {
-        this.keyPrefix = keyPrefix;
-        return this;
-    }
-
-    public <T> Boolean put(Object data, Long timeToLive, TimeUnit timeUnit) {
-        try {
-            if (data instanceof Collection) {
-                Collection<T> collectionData = (Collection<T>) data;
-                collectionData.forEach(object ->  storeInRedis(object, timeToLive, timeUnit));
-            } else {
-                storeInRedis(data, timeToLive, timeUnit);
-            }
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-
-    }
-
-
-    public JSONArray getHashValues(String hashKey) {
+    
+    public JSONArray get(String hashKey) {
         Set<Object> keys = this.redisTemplate.keys(hashKey);
 
         JSONArray arr = new JSONArray();
@@ -61,34 +39,45 @@ public class RedisHashUtil {
 
         return arr;
     }
-    
-    private void storeInRedis(Object data, Long timeToLive, TimeUnit timeUnit) {
-        Class<?> className = data.getClass();
-        String hashKey = this.keyPrefix + ":" + getObjectId(data);
 
-        // I want secondary index on field  title
-        
+    public <T> Boolean put(String keyPrefix, Object data, Long timeToLive, TimeUnit timeUnit) {
+        try {
+            if (data instanceof Collection) {
+                Collection<T> collectionData = (Collection<T>) data;
+                collectionData.forEach(object ->  storeInRedis(keyPrefix, object, timeToLive, timeUnit));
+            } else {
+                storeInRedis(keyPrefix, data, timeToLive, timeUnit);
+            }
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Boolean delete(String hashKey) {
+        return this.redisTemplate.delete(hashKey);
+    }
+    
+    private void storeInRedis(String keyPrefix, Object data, Long timeToLive, TimeUnit timeUnit) {
+        Class<?> className = data.getClass();
+        String hashKey = keyPrefix + ":" + getObjectId(data);        
         
         Field[] fields = className.getDeclaredFields();
 
         Arrays.stream(fields).forEach(field -> {
             String fieldName = field.getName();
             Object value = getValue(data, fieldName);
-            hashOperations.put(hashKey, fieldName, value);
-
+            this.hashOperations.put(hashKey, fieldName, value);
         });
 
         this.redisTemplate.expire(hashKey, timeToLive, timeUnit);
-
     }
 
     private static <T> String getObjectId(T object) {
         try {
             Method getId = object.getClass().getDeclaredMethod("getId");
-            
             return (String) getId.invoke(object, null);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -105,5 +94,4 @@ public class RedisHashUtil {
             throw new RuntimeException(e);
         }
     }
-
 }
