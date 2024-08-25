@@ -11,17 +11,8 @@ services:
       - /path/to/local/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server --save 60 1 --loglevel warning --requirepass d4B$8fF@z1N#kPq!L9wT3vX%7gR5hY2sJ6mU+0aE4cI^
 
-    networks:
-      - redis-example
-
   redis-insight:
     image: redis/redisinsight:latest
     ports:
       - 5540:5540 
     restart: always
-    networks:
-      - redis-example
-
-networks:
-  redis-example:
-    name: redis-example

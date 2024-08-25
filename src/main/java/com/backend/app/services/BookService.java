@@ -1,5 +1,6 @@
 package com.backend.app.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,22 +47,22 @@ public class BookService {
     public List<Book> getAllBooks() {
         try {
 
-            JSONArray booksFromCache = redisHashUtil.get(REDIS_KEY_PREFIX_BOOKS + ":*");
-            if (booksFromCache != null && !booksFromCache.isEmpty()) {
-                ObjectMapper objectMapper = new ObjectMapper();
+            // JSONArray booksFromCache = redisHashUtil.get(REDIS_KEY_PREFIX_BOOKS + ":*");
+            // if (booksFromCache != null && !booksFromCache.isEmpty()) {
+            //     ObjectMapper objectMapper = new ObjectMapper();
 
-                objectMapper.registerModule(new JavaTimeModule());
-                return objectMapper.readValue(booksFromCache.toString(), new TypeReference<List<Book>>() {
-                });
+            //     objectMapper.registerModule(new JavaTimeModule());
+            //     return objectMapper.readValue(booksFromCache.toString(), new TypeReference<List<Book>>() {
+            //     });
 
-            }
+            // }
 
             List<Book> books = this.bookRepository.findAll();
             if (books.isEmpty()) {
                 return List.of();
             }
 
-            redisHashUtil.put(REDIS_KEY_PREFIX_BOOKS, books, Long.valueOf(60), TimeUnit.MINUTES);
+            // redisHashUtil.put(REDIS_KEY_PREFIX_BOOKS, books, Long.valueOf(60), TimeUnit.MINUTES);
             return books;
 
         } catch (Exception e) {
@@ -140,43 +141,40 @@ public class BookService {
     public Optional<Book> updateBook(BookRequest bookRequest) {
         try {
 
-            Optional<Book> existingBook = this.getBookById(bookRequest.getId());
-            if (existingBook.isEmpty()) {
+            Optional<Book> book = this.getBookById(bookRequest.getId());
+            if (book.isEmpty()) {
                 return Optional.empty();
             }
             Timestamp now = this.getCurrentTimestamp();
-            Book updatedbook = new Book();
-            updatedbook.setId(bookRequest.getId());
-            updatedbook.setTitle(bookRequest.getTitle() != null && !bookRequest.getTitle().isEmpty() ? bookRequest.getTitle() : existingBook.get().getTitle());
-            updatedbook.setIsbn(bookRequest.getIsbn() != null && !bookRequest.getIsbn().isEmpty() ? bookRequest.getIsbn() : existingBook.get().getIsbn());
-            updatedbook.setGenre(bookRequest.getGenre() != null && !bookRequest.getGenre().isEmpty() ? bookRequest.getGenre(): existingBook.get().getGenre());
-            updatedbook.setCopiesAvailable(bookRequest.getCopiesAvailable() != existingBook.get().getCopiesAvailable() ? bookRequest.getCopiesAvailable() : existingBook.get().getCopiesAvailable());
-            updatedbook.setPrice(bookRequest.getPrice() != existingBook.get().getPrice() ? bookRequest.getPrice() : existingBook.get().getPrice());
-            updatedbook.setPublicationYear(bookRequest.getPublicationYear() != existingBook.get().getPublicationYear() ? bookRequest.getPublicationYear() : existingBook.get().getPublicationYear());
-            updatedbook.setUpdatedDate(now);
-            updatedbook.setUpdatedBy("system");
-            updatedbook.setCreatedDate(existingBook.get().getCreatedDate());
-            updatedbook.setCreatedBy(existingBook.get().getCreatedBy());
+            Book existingBook = book.get();
 
+            existingBook.setTitle(bookRequest.getTitle().isEmpty() ? existingBook.getTitle() : bookRequest.getTitle());
+            existingBook.setGenre(bookRequest.getGenre().isEmpty() ? existingBook.getGenre() : bookRequest.getGenre());
+            existingBook.setCopiesAvailable(bookRequest.getCopiesAvailable() == existingBook.getCopiesAvailable() ? existingBook.getCopiesAvailable() : bookRequest.getCopiesAvailable());
+            existingBook.setPrice(bookRequest.getPrice() == existingBook.getPrice() ? existingBook.getPrice() : bookRequest.getPrice());
+            existingBook.setPublicationYear(bookRequest.getPublicationYear() == existingBook.getPublicationYear() ? existingBook.getPublicationYear() : bookRequest.getPublicationYear());
+            existingBook.setUpdatedDate(now);
+            existingBook.setUpdatedBy("system");
+            
             Optional<Publisher> publisher = Optional.empty();
             if (bookRequest.getPublisherId() != null && !bookRequest.getPublisherId().isEmpty()) {
                 publisher = this.publisherRepository.getPublisherById(bookRequest.getPublisherId());
             }
-            updatedbook.setPublisher(!publisher.isEmpty() ? publisher.get() : existingBook.get().getPublisher());
+            existingBook.setPublisher(publisher.isEmpty() ? existingBook.getPublisher() : publisher.get());
 
-            List<Author> authors = null;
+            List<Author> authors = new ArrayList<>();
             if (bookRequest.getAuthorIds() != null && !bookRequest.getAuthorIds().isEmpty()) {
                 authors = this.authorRepository.getAuthors(bookRequest.getAuthorIds());
             }
-            updatedbook.setAuthors(authors != null && !authors.isEmpty() ? authors : existingBook.get().getAuthors());
+            existingBook.setAuthors(authors.isEmpty() ? existingBook.getAuthors() : authors);
 
-            Book updatedBook = this.bookRepository.save(updatedbook);
+            Book updatedBook = this.bookRepository.save(existingBook);
             if (updatedBook == null) {
                 return Optional.empty();
             }
 
-            this.redisHashUtil.put(REDIS_KEY_PREFIX_BOOKS, updatedBook, Long.valueOf(60), TimeUnit.MINUTES);
-            return Optional.of(updatedBook);
+            this.redisHashUtil.put(REDIS_KEY_PREFIX_BOOKS, existingBook, Long.valueOf(60), TimeUnit.MINUTES);
+            return Optional.of(existingBook);
 
         } catch (Exception e) {
             e.printStackTrace();
