@@ -31,6 +31,7 @@ public class AppSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, OAuthAuthenticationSuccessHandler oAuthAuthenticationSuccessHandler, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/users/signup").permitAll())
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/users/**").authenticated())
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/authorized").authenticated())
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())

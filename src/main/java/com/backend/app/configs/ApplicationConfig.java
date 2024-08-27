@@ -13,13 +13,21 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ApplicationConfig {
 
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     // @Bean
-    // public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-    //     return new JpaTransactionManager(entityManagerFactory);
+    // public PlatformTransactionManager transactionManager(EntityManagerFactory
+    // entityManagerFactory) {
+    // return new JpaTransactionManager(entityManagerFactory);
     // }
 
     @Bean
@@ -28,10 +36,11 @@ public class ApplicationConfig {
         config.setPassword("d4B$8fF@z1N#kPq!L9wT3vX%7gR5hY2sJ6mU+0aE4cI^");
         return new JedisConnectionFactory(config);
     }
+
     @Bean
     public RedisTemplate<Object, Object> redisTemplate() {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
-        
+
         ObjectMapper objectMapper = new ObjectMapper();
 
         // Set date format
@@ -41,7 +50,7 @@ public class ApplicationConfig {
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer(objectMapper, Object.class);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(serializer);
-      
+
         template.setHashKeySerializer(new StringRedisSerializer());
         template.setHashValueSerializer(serializer);
 

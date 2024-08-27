@@ -3,24 +3,28 @@ package com.backend.app.services;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.backend.app.models.entities.User;
+import com.backend.app.models.requests.SignUpRequest;
 import com.backend.app.repositories.UserRepository;
-import java.util.Date;
+import com.backend.app.models.response.BaseResponse;
+
 
 @Service
 public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
-
+    private PasswordEncoder passwordEncoder;
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -79,6 +83,39 @@ public class UserService implements UserDetailsService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public BaseResponse<?> createUserFromSignUp(SignUpRequest request) {
+        try {
+            Optional<User> user = userRepository.getUserByUsername(request.getUsername());
+
+            if (user.isPresent()) {
+                return new BaseResponse(4000, "Username already exists", null);
+            }
+
+            User newUser = new User();
+            newUser.setId(UUID.randomUUID().toString());
+            newUser.setUsername(request.getUsername());
+            newUser.setFirstName(request.getFirstname());
+            newUser.setLastName(request.getLastname() == null ? "" : request.getLastname());
+            newUser.setEmail(request.getEmail());
+            newUser.setAccountNonExpired(true);
+            newUser.setAccountNonLocked(true);
+            newUser.setEnabled(true);
+            newUser.setCreatedDate(new Date());
+            newUser.setPassword(this.passwordEncoder.encode(request.getPassword()));
+
+            // Save user
+            User savedUser = userRepository.save(newUser);
+            if (savedUser == null) {
+                return new BaseResponse(4000, "Failed to create user", null);
+            }
+
+            return  new BaseResponse(2001, "Signed up successfully", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new BaseResponse(5000, "Failed to create user", null);
         }
     }
     
