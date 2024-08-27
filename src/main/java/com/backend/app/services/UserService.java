@@ -70,8 +70,8 @@ public class UserService implements UserDetailsService {
             user.setCredentialsNonExpired(true);
             user.setEnabled(true);
     
-            Boolean success = existedUser.isPresent() ? userRepository.updateUser(user) : userRepository.createUser(user);
-            if (Boolean.FALSE.equals(success)) {
+            User newUser = userRepository.save(user);
+            if (newUser == null) {
                 return null;
             }
     
