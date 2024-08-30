@@ -11,21 +11,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.backend.app.models.entities.User;
+import com.backend.app.models.requests.SignInRequest;
 import com.backend.app.models.requests.SignUpRequest;
 import com.backend.app.repositories.UserRepository;
+import com.backend.app.security.jwt.JwtService;
 import com.backend.app.models.response.BaseResponse;
 
 
 @Service
 public class UserService implements UserDetailsService {
 
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    @Autowired private UserRepository userRepository;
+    
+    @Autowired private PasswordEncoder passwordEncoder;
+    
+    @Autowired private JwtService jwtService;
 
     @Override
     public User loadUserByUsername(String username) {
@@ -88,10 +88,16 @@ public class UserService implements UserDetailsService {
 
     public BaseResponse<?> createUserFromSignUp(SignUpRequest request) {
         try {
-            Optional<User> user = userRepository.getUserByUsername(request.getUsername());
+            Optional<User> userWithExistedUsername = userRepository.getUserByUsername(request.getUsername());
 
-            if (user.isPresent()) {
+            if (userWithExistedUsername.isPresent()) {
                 return new BaseResponse(4000, "Username already exists", null);
+            }
+
+            Optional<User> userWithExistedEmail = userRepository.getUserByEmail(request.getEmail());
+
+            if (userWithExistedEmail.isPresent()) {
+                return new BaseResponse(4000, String.format("Email %s already exists", request.getEmail()), null);
             }
 
             User newUser = new User();
@@ -119,4 +125,20 @@ public class UserService implements UserDetailsService {
         }
     }
     
+    public BaseResponse<?> signIn(SignInRequest request) {
+        try {
+            Optional<User> user = userRepository.getUserByUsername(request.getUsername());
+
+            if (user.isEmpty()) {
+                return new BaseResponse(4000, "User not found", null);
+            }
+
+            String accessToken = this.jwtService.generateToken(user.get());
+
+            return new BaseResponse(2001, "Signed in successfully", accessToken);
+
+        } catch (Exception e) {
+            return new BaseResponse(5000, "Failed to sign in", null);
+        }
+    }
 }

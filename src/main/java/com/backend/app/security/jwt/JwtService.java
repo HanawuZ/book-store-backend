@@ -22,9 +22,12 @@ public class JwtService {
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("providerId", user.getProviderId());
         claims.put("username", user.getUsername());
-        claims.put("provider", user.getProvider());
+
+        if (user.getProviderId() != null) claims.put("providerId", user.getProviderId());
+        if (user.getProvider() != null) claims.put("provider", user.getProvider());
+        if (user.getEmail() != null) claims.put("email", user.getEmail());
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())

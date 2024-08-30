@@ -19,11 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class ApplicationConfig {
 
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     // @Bean
     // public PlatformTransactionManager transactionManager(EntityManagerFactory
     // entityManagerFactory) {

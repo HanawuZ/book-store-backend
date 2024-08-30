@@ -2,11 +2,15 @@ package com.backend.app.configs;
 
 import java.util.function.Consumer;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
@@ -21,32 +25,38 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.backend.app.security.jwt.JwtAuthenticationFilter;
 import com.backend.app.security.oauth2.handlers.OAuthAuthenticationSuccessHandler;
+import com.backend.app.services.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
 public class AppSecurityConfig {
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, OAuthAuthenticationSuccessHandler oAuthAuthenticationSuccessHandler, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+            OAuthAuthenticationSuccessHandler oAuthAuthenticationSuccessHandler,
+            JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/users/signin").permitAll())
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/users/signup").permitAll())
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/users/**").authenticated())
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/authorized").authenticated())
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .oauth2Login(oauth -> oauth.authorizationEndpoint(authorization -> authorization
                         .authorizationRequestResolver(
-                                authorizationRequestResolver(this.clientRegistrationRepository())))
-                        .successHandler(oAuthAuthenticationSuccessHandler)
-                )
+                                authorizationRequestResolver(
+                                        this.clientRegistrationRepository())))
+                        .successHandler(oAuthAuthenticationSuccessHandler))
+                .authenticationProvider(authProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                        })
-                )
+                        }))
                 .build();
     }
 
@@ -54,8 +64,24 @@ public class AppSecurityConfig {
     public ClientRegistrationRepository clientRegistrationRepository() {
         return new InMemoryClientRegistrationRepository(
                 this.githubClientRegistrationRepository(),
-                this.googleClientRegistration()
-        );
+                this.googleClientRegistration());
+    }
+
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean UserService userService() {
+        return new UserService();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService());
+        authProvider.setPasswordEncoder(encoder());
+        return authProvider;
     }
 
     private ClientRegistration googleClientRegistration() {
@@ -95,7 +121,7 @@ public class AppSecurityConfig {
     // ------- Handle Authorize request before send to ouath2 provider
     private OAuth2AuthorizationRequestResolver authorizationRequestResolver(
             ClientRegistrationRepository clientRegistrationRepository) {
-        
+
         System.out.println("Resolver called");
         DefaultOAuth2AuthorizationRequestResolver authorizationRequestResolver = new DefaultOAuth2AuthorizationRequestResolver(
                 clientRegistrationRepository, "/oauth2/authorization");

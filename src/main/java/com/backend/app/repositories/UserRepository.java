@@ -19,6 +19,8 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> getUserByProviderId(String providerId);
 
+    Optional<User> getUserByEmail(String email);
+
     User save(User user);
 
 }
