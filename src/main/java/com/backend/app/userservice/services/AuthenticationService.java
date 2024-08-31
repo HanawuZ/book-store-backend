@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.backend.app.shared.libraries.http.BaseResponse;
 import com.backend.app.shared.libraries.security.authenticator.GoogleAuthenticatorService;
+import com.backend.app.shared.libraries.security.jwt.JwtUtility;
 import com.backend.app.shared.models.entities.User;
 import com.backend.app.userservice.models.Enable2FaRequest;
 import com.backend.app.userservice.repositories.UserRepository;
@@ -20,6 +21,7 @@ public class AuthenticationService {
     @Autowired
     private UserRepository userRepository;
 
+    private JwtUtility jwtUtility = new JwtUtility();
     public BaseResponse<String> generateQrCode(String id) {
         try {
             Optional<User> existedUser = userRepository.findById(id);
@@ -47,7 +49,6 @@ public class AuthenticationService {
 
     public BaseResponse<String> enable2FA(Enable2FaRequest request) {
         try {
-
             Optional<User> existedUser = userRepository.findById(request.getUserId());
             if (existedUser.isEmpty()) {
                 return new BaseResponse<>(4000, "User not found", null);
@@ -56,7 +57,7 @@ public class AuthenticationService {
                 return new BaseResponse<>(4000, "User already using 2FA", null);
             }
 
-            Boolean isVerified = googleAuthenticatorService.isValid(existedUser.get().getSecret(), request.getTotpCode());
+            Boolean isVerified = googleAuthenticatorService.isValid(existedUser.get().getSecret(), Integer.parseInt(request.getTotpCode()));
             if (isVerified.equals(false)) {
                 return new BaseResponse<>(4000, "Invalid 2FA code", null);
             }
@@ -68,6 +69,25 @@ public class AuthenticationService {
                 return new BaseResponse<>(4000, "Failed to enable 2FA", null);
             }
             return new BaseResponse<>(2000, "Enable 2FA successfully", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new BaseResponse<>(5000, e.getMessage(), null);
+        }
+    }
+
+    public BaseResponse<String> verify2FA(Enable2FaRequest request) {
+        try {
+            Optional<User> existedUser = userRepository.findById(request.getUserId());
+            if (existedUser.isEmpty()) {
+                return new BaseResponse<>(4000, "User not found", null);
+            }
+
+            Boolean isVerified = googleAuthenticatorService.isValid(existedUser.get().getSecret(), Integer.parseInt(request.getTotpCode()));
+            if (isVerified.equals(false)) {
+                return new BaseResponse<>(4000, "Invalid 2FA code", null);
+            }
+
+            return new BaseResponse<>(2000, "Verified 2FA successfully", jwtUtility.generateToken(existedUser.get()));
         } catch (Exception e) {
             e.printStackTrace();
             return new BaseResponse<>(5000, e.getMessage(), null);

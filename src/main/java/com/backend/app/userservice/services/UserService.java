@@ -2,6 +2,7 @@ package com.backend.app.userservice.services;
 
 import java.util.UUID;
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,11 +34,11 @@ public class UserService implements UserDetailsService {
     @Override
     public User loadUserByUsername(String username) {
         try {
-            User user = userRepository.findByUsername(username);
-            if (user == null) {
+            Optional<User> user = userRepository.findByUsername(username);
+            if (user.isEmpty()) {
                 return null;
             }
-            return user;
+            return user.get();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,32 +46,37 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public BaseResponse<?> signIn(SignInRequest request) {
+    public BaseResponse<String> signIn(SignInRequest request) {
         try {
-            User user = userRepository.findByUsername(request.getUsername());
-
-            if (user == null) {
-                return new BaseResponse(4000, "User not found", null);
+            Optional<User> user = userRepository.findByUsername(request.getUsername());
+            if (user.isEmpty()) {
+                return new BaseResponse<>(4000, "User not found", null);
             }
-            return new BaseResponse(2001, "Signed in successfully", jwtUtility.generateToken(user));
+
+            if (user.get().getIsUsing2FA().equals(true)) {
+                String redirectUrl = String.format("https://example.com/users/verify?userId=%s", user.get().getId());
+                return new BaseResponse<>(2001, "Please verify code at api verify", redirectUrl);
+            }
+
+            return new BaseResponse<>(2001, "Signed in successfully", jwtUtility.generateToken(user.get()));
 
         } catch (Exception e) {
-            return new BaseResponse(5000, "Failed to sign in", null);
+            return new BaseResponse<>(5000, "Failed to sign in", null);
         }
     }
 
-    public BaseResponse<?> createUserFromSignUp(SignUpRequest request) {
+    public BaseResponse<String> createUserFromSignUp(SignUpRequest request) {
         try {
-            User userWithExistedUsername = userRepository.findByUsername(request.getUsername());
+            Optional<User> userWithExistedUsername = userRepository.findByUsername(request.getUsername());
 
-            if (userWithExistedUsername != null) {
-                return new BaseResponse(4000, "Username already exists", null);
+            if (userWithExistedUsername.isPresent()) {
+                return new BaseResponse<>(4000, "Username already exists", null);
             }
 
-            User userWithExistedEmail = userRepository.findByEmail(request.getEmail());
+            Optional<User> userWithExistedEmail = userRepository.findByEmail(request.getEmail());
 
-            if (userWithExistedEmail != null) {
-                return new BaseResponse(4000, String.format("Email %s already exists", request.getEmail()), null);
+            if (userWithExistedEmail.isPresent()) {
+                return new BaseResponse<>(4000, String.format("Email %s already exists", request.getEmail()), null);
             }
 
             User newUser = new User();
@@ -90,13 +96,13 @@ public class UserService implements UserDetailsService {
             // Save user
             User savedUser = userRepository.save(newUser);
             if (savedUser == null) {
-                return new BaseResponse(4000, "Failed to create user", null);
+                return new BaseResponse<>(4000, "Failed to create user", null);
             }
 
-            return new BaseResponse(2001, "Signed up successfully", null);
+            return new BaseResponse<>(2001, "Signed up successfully", null);
         } catch (Exception e) {
             e.printStackTrace();
-            return new BaseResponse(5000, e.getMessage(), null);
+            return new BaseResponse<>(5000, e.getMessage(), null);
         }
     }
 }

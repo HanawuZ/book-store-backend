@@ -38,7 +38,7 @@ public class UserController {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Password is required");
             }
 
-            BaseResponse response = this.userService.signIn(request);
+            BaseResponse<String> response = this.userService.signIn(request);
 
             if (response.getCode() != 2001) {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Invalid username or password");
@@ -50,7 +50,7 @@ public class UserController {
             String error = String.format("Internal server error: %s", e.getMessage());
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(error);
         }
-    }
+    }    
 
     @PostMapping("/signup")
     public ResponseEntity<?> userSignUp(@RequestBody SignUpRequest request) {

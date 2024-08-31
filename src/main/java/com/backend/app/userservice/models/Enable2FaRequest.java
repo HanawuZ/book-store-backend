@@ -11,5 +11,5 @@ public class Enable2FaRequest {
     private String userId;
 
     @JsonProperty("totpCode")
-    private Integer totpCode;
+    private String totpCode;
 }
