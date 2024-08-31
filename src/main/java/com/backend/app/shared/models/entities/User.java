@@ -54,14 +54,14 @@ public class User implements UserDetails {
     private Date createdDate;
     
     @JsonProperty("accountNonExpired")
-    private boolean accountNonExpired;
+    private Boolean accountNonExpired;
     
     @JsonProperty("accountNonLocked")
-    private boolean accountNonLocked;
+    private Boolean accountNonLocked;
 
     @JsonProperty("credentialsNonExpired")
     @Nullable
-    private boolean credentialsNonExpired;
+    private Boolean credentialsNonExpired;
     
     @JsonProperty("providerId")
     @Nullable
@@ -72,5 +72,9 @@ public class User implements UserDetails {
     private String provider;
 
     @JsonProperty("enabled")
-    private boolean enabled;
+    private Boolean enabled;
+
+    private Boolean isUsing2FA;
+
+    private String secret;
 }

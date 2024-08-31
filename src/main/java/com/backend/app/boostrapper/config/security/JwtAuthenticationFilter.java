@@ -11,12 +11,18 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.backend.app.shared.libraries.jwt.JwtUtility;
+
+import com.backend.app.userservice.services.UserService;
+import com.backend.app.shared.libraries.security.jwt.JwtUtility;
+import com.backend.app.shared.models.entities.User;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private JwtUtility jwtUtility = new JwtUtility();
+
+    @Autowired
+    private UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -36,12 +42,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        String username = jwtUtility.extractUsername(token);
+        if (username == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
+        User user = userService.loadUserByUsername(username);
 
-        // UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user,
-        //         null, user.getAuthorities());
-        // authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        // SecurityContextHolder.getContext().setAuthentication(authToken);
+        if (user == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user,
+                null, user.getAuthorities());
+        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authToken);
         filterChain.doFilter(request, response);
     }
 }

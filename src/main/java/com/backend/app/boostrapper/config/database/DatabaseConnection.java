@@ -1,4 +1,4 @@
-package com.backend.app.boostrapper.config;
+package com.backend.app.boostrapper.config.database;
 
 import javax.sql.DataSource;
 
