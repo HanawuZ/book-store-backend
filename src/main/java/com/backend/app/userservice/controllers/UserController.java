@@ -41,7 +41,7 @@ public class UserController {
             BaseResponse<String> response = this.userService.signIn(request);
 
             if (response.getCode() != 2001) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Invalid username or password");
+                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(response);
             }
 
             return ResponseEntity.status(HttpServletResponse.SC_OK).body(response);

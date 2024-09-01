@@ -2,14 +2,17 @@ package com.backend.app.userservice.services;
 
 import java.util.UUID;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.backend.app.shared.libraries.http.BaseResponse;
+import com.backend.app.shared.libraries.redis.RedisValueUtility;
 import com.backend.app.shared.libraries.security.authenticator.GoogleAuthenticatorService;
 import com.backend.app.shared.libraries.security.jwt.JwtUtility;
 import com.backend.app.shared.models.entities.User;
@@ -17,19 +20,29 @@ import com.backend.app.userservice.models.SignInRequest;
 import com.backend.app.userservice.models.SignUpRequest;
 import com.backend.app.userservice.repositories.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 public class UserService implements UserDetailsService {
+
+    private static final Integer MAX_LOGIN_ATTEMPT_LIMIT = 5;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private GoogleAuthenticatorService googleAuthenticatorService;
-    
+
     private JwtUtility jwtUtility = new JwtUtility();
+
+    private RedisValueUtility redisValueUtility;
+
+    public UserService(RedisTemplate<Object, Object> redisTemplate) {
+        this.redisValueUtility = new RedisValueUtility(redisTemplate);
+    }
 
     @Override
     public User loadUserByUsername(String username) {
@@ -53,6 +66,25 @@ public class UserService implements UserDetailsService {
                 return new BaseResponse<>(4000, "User not found", null);
             }
 
+            // Check if password is matched
+            if (!passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
+
+                String key = String.format("attempt_%s", user.get().getId());
+                String count = redisValueUtility.getValue(key);
+
+                if (count == null) {
+                    count = "1";
+                    redisValueUtility.setValue(key, count, 5, TimeUnit.MINUTES);
+                } else {
+                    Integer newCount = Integer.parseInt(count) + 1;
+                    if (newCount > MAX_LOGIN_ATTEMPT_LIMIT) {
+                        return new BaseResponse<>(4290, "Too many login attempts", null);
+                    }
+                    redisValueUtility.setValue(key, String.valueOf(newCount), 5, TimeUnit.MINUTES);
+                }
+                return new BaseResponse<>(4001, "Invalid password!", null);
+            }
+
             if (user.get().getIsUsing2FA().equals(true)) {
                 String redirectUrl = String.format("https://example.com/users/verify?userId=%s", user.get().getId());
                 return new BaseResponse<>(2001, "Please verify code at api verify", redirectUrl);
@@ -61,7 +93,8 @@ public class UserService implements UserDetailsService {
             return new BaseResponse<>(2001, "Signed in successfully", jwtUtility.generateToken(user.get()));
 
         } catch (Exception e) {
-            return new BaseResponse<>(5000, "Failed to sign in", null);
+            e.printStackTrace();
+            return new BaseResponse<>(5000, e.getMessage(), null);
         }
     }
 
