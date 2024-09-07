@@ -14,9 +14,7 @@ import java.util.List;
 import com.backend.app.shared.libraries.http.BaseResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Order(1)
-@Component
-public class RequestFilter extends OncePerRequestFilter {
+public class HttpRequestFilter extends OncePerRequestFilter {
 
     // Create POST, PUT, PATCH string array
     private static final List<String> CONTENT_ALLOWED_STRINGS = Arrays.asList("POST", "PUT", "PATCH");

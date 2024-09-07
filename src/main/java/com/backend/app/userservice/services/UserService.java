@@ -6,11 +6,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.backend.app.shared.libraries.http.BaseResponse;
 import com.backend.app.shared.libraries.redis.RedisValueUtility;
 import com.backend.app.shared.libraries.security.authenticator.GoogleAuthenticatorService;
@@ -19,29 +17,32 @@ import com.backend.app.shared.models.entities.User;
 import com.backend.app.userservice.models.SignInRequest;
 import com.backend.app.userservice.models.SignUpRequest;
 import com.backend.app.userservice.repositories.UserRepository;
-
-import lombok.RequiredArgsConstructor;
+import com.backend.app.userservice.services.interfaces.UserServiceInterface;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService implements UserDetailsService, UserServiceInterface {
 
     private static final Integer MAX_LOGIN_ATTEMPT_LIMIT = 5;
 
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
+    private GoogleAuthenticatorService googleAuthenticatorService;
+    private RedisValueUtility redisValueUtility;
+    private JwtUtility jwtUtility;
 
     @Autowired
-    private GoogleAuthenticatorService googleAuthenticatorService;
-
-    private JwtUtility jwtUtility = new JwtUtility();
-
-    private RedisValueUtility redisValueUtility;
-
-    public UserService(RedisTemplate<Object, Object> redisTemplate) {
-        this.redisValueUtility = new RedisValueUtility(redisTemplate);
+    public UserService(
+        UserRepository userRepository,
+        PasswordEncoder passwordEncoder,
+        GoogleAuthenticatorService googleAuthenticatorService,
+        RedisValueUtility redisValueUtility,
+        JwtUtility jwtUtility
+    ) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.googleAuthenticatorService = googleAuthenticatorService;
+        this.redisValueUtility = redisValueUtility;
+        this.jwtUtility = jwtUtility;
     }
 
     @Override
@@ -67,6 +68,7 @@ public class UserService implements UserDetailsService {
             }
 
             // Check if password is matched
+            // Should blocked request from IP
             if (!passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
 
                 String key = String.format("attempt_%s", user.get().getId());

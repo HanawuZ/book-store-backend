@@ -38,7 +38,7 @@ public class UserController {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Password is required");
             }
 
-            BaseResponse<String> response = this.userService.signIn(request);
+            BaseResponse<String> response = userService.signIn(request);
 
             if (response.getCode() != 2001) {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(response);
@@ -71,7 +71,7 @@ public class UserController {
             if (request.getPassword() == null || request.getPassword().isEmpty()) {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Password is required");
             }
-            BaseResponse response = userService.createUserFromSignUp(request);
+            BaseResponse<String> response = userService.createUserFromSignUp(request);
 
             if (response.getCode() != 2001) {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(response);
