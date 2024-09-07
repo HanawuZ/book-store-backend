@@ -68,5 +68,17 @@ public class ShoppingCartModel {
         private Double price;
     }
 
+    @Data
+    public static class AddItemRequest {
+        @JsonProperty("bookId")
+        private String bookId;
+
+        @JsonProperty("quantity")
+        private Integer quantity;
+
+        @JsonProperty("userId")
+        private String userId;
+    }
+
 }
 
