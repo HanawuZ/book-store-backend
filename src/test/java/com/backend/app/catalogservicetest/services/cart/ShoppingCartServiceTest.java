@@ -37,8 +37,8 @@ public class ShoppingCartServiceTest {
         user1.setId("user1");
         user1.setUsername("user1");
         user1.setEmail("a@gmail.com");
-        user1.setFirstName("John");
-        user1.setLastName("Doe");
+        // user1.setFirstName("John");
+        // user1.setLastName("Doe");
         user1.setProfilePicture("https://example.com/image.jpg");
         user1.setCreatedDate(new Date());
         user1.setPassword("123456");

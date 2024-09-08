@@ -115,19 +115,19 @@ public class UserService implements UserDetailsService, UserServiceInterface {
             }
 
             User newUser = new User();
-            newUser.setId(UUID.randomUUID().toString());
-            newUser.setUsername(request.getUsername());
-            newUser.setFirstName(request.getFirstname());
-            newUser.setLastName(request.getLastname() == null ? "" : request.getLastname());
-            newUser.setEmail(request.getEmail());
-            newUser.setAccountNonExpired(true);
-            newUser.setAccountNonLocked(true);
-            newUser.setEnabled(true);
-            newUser.setCredentialsNonExpired(true);
-            newUser.setIsUsing2FA(false);
-            newUser.setCreatedDate(new Date());
-            newUser.setPassword(this.passwordEncoder.encode(request.getPassword()));
-            newUser.setSecret(googleAuthenticatorService.generateSecretKey());
+            // newUser.setId(UUID.randomUUID().toString());
+            // newUser.setUsername(request.getUsername());
+            // newUser.setFirstName(request.getFirstname());
+            // newUser.setLastName(request.getLastname() == null ? "" : request.getLastname());
+            // newUser.setEmail(request.getEmail());
+            // newUser.setAccountNonExpired(true);
+            // newUser.setAccountNonLocked(true);
+            // newUser.setEnabled(true);
+            // newUser.setCredentialsNonExpired(true);
+            // newUser.setIsUsing2FA(false);
+            // newUser.setCreatedDate(new Date());
+            // newUser.setPassword(this.passwordEncoder.encode(request.getPassword()));
+            // newUser.setSecret(googleAuthenticatorService.generateSecretKey());
             // Save user
             User savedUser = userRepository.save(newUser);
             if (savedUser == null) {

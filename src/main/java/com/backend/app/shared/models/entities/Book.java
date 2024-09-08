@@ -60,6 +60,9 @@ public class Book implements Serializable {
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 
+    @JsonProperty("isActive")
+    @Column(name = "is_active", columnDefinition = "boolean default true")
+    private Boolean isActive;
 
     @JsonProperty("createdDate")
     @Column(name = "created_date")

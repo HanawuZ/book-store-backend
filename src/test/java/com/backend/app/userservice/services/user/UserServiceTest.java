@@ -46,8 +46,8 @@ class UserServiceTest {
         user1.setId("user1");
         user1.setUsername("user1");
         user1.setEmail("a@gmail.com");
-        user1.setFirstName("John");
-        user1.setLastName("Doe");
+        // user1.setFirstName("John");
+        // user1.setLastName("Doe");
         user1.setProfilePicture("https://example.com/image.jpg");
         user1.setCreatedDate(new Date());
         user1.setPassword(passwordEncoder.encode("123456"));
@@ -57,8 +57,8 @@ class UserServiceTest {
         userWith2FA.setId("userWith2FA");
         userWith2FA.setUsername("userWith2FA");
         userWith2FA.setEmail("b@gmail.com");
-        userWith2FA.setFirstName("Jane");
-        userWith2FA.setLastName("Doe");
+        // userWith2FA.setFirstName("Jane");
+        // userWith2FA.setLastName("Doe");
         userWith2FA.setProfilePicture("https://example.com/image.jpg");
         userWith2FA.setCreatedDate(new Date());
         userWith2FA.setPassword(passwordEncoder.encode("54321"));

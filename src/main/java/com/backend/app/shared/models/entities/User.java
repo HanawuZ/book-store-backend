@@ -26,13 +26,6 @@ public class User implements UserDetails {
     @OneToMany(fetch = FetchType.EAGER)
     private Set<Authority> authorities;
 
-    @JsonProperty("firstName")
-    private String firstName;
-    
-    @JsonProperty("lastName")
-    @Nullable
-    private String lastName;
-
     @JsonProperty("username")
     private String username;
 

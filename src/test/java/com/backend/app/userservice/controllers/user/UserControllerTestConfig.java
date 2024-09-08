@@ -38,8 +38,8 @@ public class UserControllerTestConfig {
                 User user = new User();
                 user.setUsername(username);
                 user.setEmail("a@a.com");
-                user.setFirstName("John");
-                user.setLastName("Doe");
+                // user.setFirstName("John");
+                // user.setLastName("Doe");
                 user.setProfilePicture("https://example.com/image.jpg");
                 user.setCreatedDate(new Date());
                 return user;
