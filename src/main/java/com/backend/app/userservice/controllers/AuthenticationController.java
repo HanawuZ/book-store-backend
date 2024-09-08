@@ -42,10 +42,11 @@ public class AuthenticationController {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(response);
             }
             return ResponseEntity.status(HttpServletResponse.SC_OK).body(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            String error = String.format("Internal server error: %s", e.getMessage());
-            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new BaseResponse<String>(5000, error, null));
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            String error = String.format("Internal server error: %s", exception.getMessage());
+            BaseResponse<String> errorResponse = new BaseResponse<>(5000, error, null);
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
@@ -65,10 +66,11 @@ public class AuthenticationController {
             }
             return ResponseEntity.status(HttpServletResponse.SC_OK).body(response);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            String error = String.format("Internal server error: %s", e.getMessage());
-            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new BaseResponse<String>(5000, error, null));
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            String error = String.format("Internal server error: %s", exception.getMessage());
+            BaseResponse<String> errorResponse = new BaseResponse<>(5000, error, null);
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
     
@@ -87,10 +89,11 @@ public class AuthenticationController {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(response);
             }
             return ResponseEntity.status(HttpServletResponse.SC_OK).body(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            String error = String.format("Internal server error: %s", e.getMessage());
-            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new BaseResponse<String>(5000, error, null));
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            String error = String.format("Internal server error: %s", exception.getMessage());
+            BaseResponse<String> errorResponse = new BaseResponse<>(5000, error, null);
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     } 
 }

@@ -13,7 +13,9 @@ import com.backend.app.shared.libraries.http.BaseResponse;
 import com.backend.app.shared.libraries.redis.RedisValueUtility;
 import com.backend.app.shared.libraries.security.authenticator.GoogleAuthenticatorService;
 import com.backend.app.shared.libraries.security.jwt.JwtUtility;
+import com.backend.app.shared.models.entities.Customer;
 import com.backend.app.shared.models.entities.User;
+import com.backend.app.shared.models.entities.UserMapping;
 import com.backend.app.userservice.models.SignInRequest;
 import com.backend.app.userservice.models.SignUpRequest;
 import com.backend.app.userservice.repositories.UserRepository;
@@ -48,7 +50,7 @@ public class UserService implements UserDetailsService, UserServiceInterface {
     @Override
     public User loadUserByUsername(String username) {
         try {
-            Optional<User> user = userRepository.findByUsername(username);
+            Optional<User> user = userRepository.findByUsernameOrEmail(username, username);
             if (user.isEmpty()) {
                 return null;
             }
@@ -60,9 +62,10 @@ public class UserService implements UserDetailsService, UserServiceInterface {
         }
     }
 
+    @Override
     public BaseResponse<String> signIn(SignInRequest request) {
         try {
-            Optional<User> user = userRepository.findByUsername(request.getUsername());
+            Optional<User> user = userRepository.findByUsernameOrEmail(request.getUsername(), request.getUsername());
             if (user.isEmpty()) {
                 return new BaseResponse<>(4000, "User not found", null);
             }
@@ -94,50 +97,64 @@ public class UserService implements UserDetailsService, UserServiceInterface {
 
             return new BaseResponse<>(2001, "Signed in successfully", jwtUtility.generateToken(user.get()));
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new BaseResponse<>(5000, e.getMessage(), null);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            String error = String.format("Internal server error: %s", exception.getMessage());
+            return new BaseResponse<>(5000, error, null);
         }
     }
 
+    @Override
     public BaseResponse<String> createUserFromSignUp(SignUpRequest request) {
         try {
-            Optional<User> userWithExistedUsername = userRepository.findByUsername(request.getUsername());
+            Optional<User> existedUser = userRepository.findByUsernameOrEmail(request.getUsername(), request.getEmail());
 
-            if (userWithExistedUsername.isPresent()) {
-                return new BaseResponse<>(4000, "Username already exists", null);
+            if (existedUser.isPresent()) {
+                return new BaseResponse<>(4000, "User with username or email already exists", null);
             }
 
-            Optional<User> userWithExistedEmail = userRepository.findByEmail(request.getEmail());
-
-            if (userWithExistedEmail.isPresent()) {
-                return new BaseResponse<>(4000, String.format("Email %s already exists", request.getEmail()), null);
-            }
-
+            Date createdDate = new Date();
             User newUser = new User();
-            // newUser.setId(UUID.randomUUID().toString());
-            // newUser.setUsername(request.getUsername());
-            // newUser.setFirstName(request.getFirstname());
-            // newUser.setLastName(request.getLastname() == null ? "" : request.getLastname());
-            // newUser.setEmail(request.getEmail());
-            // newUser.setAccountNonExpired(true);
-            // newUser.setAccountNonLocked(true);
-            // newUser.setEnabled(true);
-            // newUser.setCredentialsNonExpired(true);
-            // newUser.setIsUsing2FA(false);
-            // newUser.setCreatedDate(new Date());
-            // newUser.setPassword(this.passwordEncoder.encode(request.getPassword()));
-            // newUser.setSecret(googleAuthenticatorService.generateSecretKey());
+
+            newUser.setId(UUID.randomUUID().toString());
+            newUser.setUsername(request.getUsername());
+            newUser.setEmail(request.getEmail());
+            newUser.setAccountNonExpired(true);
+            newUser.setAccountNonLocked(true);
+            newUser.setEnabled(true);
+            newUser.setCredentialsNonExpired(true);
+            newUser.setIsUsing2FA(false);
+            newUser.setCreatedDate(createdDate);
+            newUser.setPassword(this.passwordEncoder.encode(request.getPassword()));
+            newUser.setSecret(googleAuthenticatorService.generateSecretKey());
+
+            Customer customer = new Customer();
+            customer.setId(UUID.randomUUID().toString());
+            customer.setFirstName(request.getFirstname());
+            customer.setLastName(request.getLastname() == null ? "" : request.getLastname());
+            customer.setCreatedDate(createdDate);
+            customer.setCreatedBy("system");
+            customer.setUpdatedDate(createdDate);
+            customer.setUpdatedBy("system");
+
+            UserMapping userMapping = new UserMapping();
+            userMapping.setId(UUID.randomUUID().toString());
+            userMapping.setUser(newUser);
+            userMapping.setAuthor(null);
+            userMapping.setCustomer(customer);
+            userMapping.setIsActive(true);
+
             // Save user
-            User savedUser = userRepository.save(newUser);
-            if (savedUser == null) {
+            Boolean completed = userRepository.createCustomer(newUser, customer, userMapping);
+            if (completed.equals(false)) {
                 return new BaseResponse<>(4000, "Failed to create user", null);
             }
 
             return new BaseResponse<>(2001, "Signed up successfully", null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new BaseResponse<>(5000, e.getMessage(), null);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            String error = String.format("Internal server error: %s", exception.getMessage());
+            return new BaseResponse<>(5000, error, null);
         }
     }
 }

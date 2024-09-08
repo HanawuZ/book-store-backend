@@ -1,19 +1,15 @@
-package com.backend.app.boostrapper.config.middleware;
+package com.backend.app.boostrapper.config.security.filters;
 
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.stereotype.Component;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.web.session.SessionManagementFilter;
 import com.backend.app.userservice.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.backend.app.shared.libraries.http.BaseResponse;

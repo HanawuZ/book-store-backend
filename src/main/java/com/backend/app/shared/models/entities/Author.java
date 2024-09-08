@@ -28,8 +28,7 @@ public class Author implements Serializable {
     private String pseudonym;
 
     @JsonProperty("firstname")
-    @Column(name = "firstname")
-    @Nonnull
+    @Column(name = "firstname", nullable = false)
     private String firstname;
 
     @JsonProperty("lastname")

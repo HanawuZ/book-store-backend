@@ -32,11 +32,4 @@ public class AuthenticationConfig {
         return new GoogleAuthenticatorService();
     }
 
-    // @Bean
-    // public DaoAuthenticationProvider authProvider() {
-    //     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-    //     authProvider.setUserDetailsService(userService());
-    //     authProvider.setPasswordEncoder(encoder());
-    //     return authProvider;
-    // }
 }

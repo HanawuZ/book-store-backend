@@ -18,6 +18,7 @@ public class Customer {
     
     @Id
     @JsonProperty("id")
+    @Column(name = "id")
     private String id;
     
     @JsonProperty("firstName")
@@ -31,6 +32,7 @@ public class Customer {
 
     @JsonProperty("phoneOne")
     @Column(name = "phone_one")
+    @Nullable
     private String phoneOne;
 
     @JsonProperty("phoneTwo")

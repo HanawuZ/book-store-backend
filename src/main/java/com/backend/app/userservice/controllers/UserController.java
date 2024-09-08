@@ -28,48 +28,64 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> userSignIn(@RequestBody SignInRequest request) {
+    public ResponseEntity<BaseResponse<String>> userSignIn(@RequestBody SignInRequest request) {
         try {
             if (request.getUsername() == null || request.getUsername().isEmpty()) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Username is required");
+                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST)
+                        .body(new BaseResponse<String>(4000, "Username is required", null));
             }
 
             if (request.getPassword() == null || request.getPassword().isEmpty()) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Password is required");
+                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST)
+                        .body(new BaseResponse<String>(4000, "Password is required", null));
             }
 
             BaseResponse<String> response = userService.signIn(request);
-
+            
+            if (response.getCode().equals(5000)) {
+                return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(response);
+            }
+            if (response.getCode().equals(4001)) {
+                return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body(response);
+            }
             if (response.getCode() != 2001) {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(response);
             }
 
             return ResponseEntity.status(HttpServletResponse.SC_OK).body(response);
 
-        } catch (Exception e) {
-            String error = String.format("Internal server error: %s", e.getMessage());
-            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(error);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            String error = String.format("Internal server error: %s", exception.getMessage());
+            BaseResponse<String> errorResponse = new BaseResponse<>(5000, error, null);
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(errorResponse);
         }
-    }    
+    }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> userSignUp(@RequestBody SignUpRequest request) {
+    public ResponseEntity<BaseResponse<String>> userSignUp(@RequestBody SignUpRequest request) {
         try {
             if (request.getUsername() == null || request.getUsername().isEmpty()) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Username is required");
+                return ResponseEntity
+                        .status(HttpServletResponse.SC_BAD_REQUEST)
+                        .body(new BaseResponse<String>(4000, "Username is required", null));
             }
             if (request.getEmail() == null || request.getEmail().isEmpty()) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Email is required");
+                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST)
+                        .body(new BaseResponse<String>(4000, "Email is required", null));
             }
             if (PatternMatch.isEmailValid(request.getEmail()).equals(false)) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Invalid email");
+                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST)
+                        .body(new BaseResponse<String>(4000, "Email is not valid", null));
             }
             if (request.getFirstname() == null || request.getFirstname().isEmpty()) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Firstname is required");
+                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST)
+                        .body(new BaseResponse<String>(4000, "Firstname is required", null));
             }
 
             if (request.getPassword() == null || request.getPassword().isEmpty()) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body("Password is required");
+                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST)
+                        .body(new BaseResponse<String>(4000, "Password is required", null));
             }
             BaseResponse<String> response = userService.createUserFromSignUp(request);
 
@@ -77,9 +93,11 @@ public class UserController {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(response);
             }
             return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(response);
-        } catch (Exception e) {
-            String error = String.format("Internal server error: %s", e.getMessage());
-            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(error);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            String error = String.format("Internal server error: %s", exception.getMessage());
+            BaseResponse<String> errorResponse = new BaseResponse<>(5000, error, null);
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 }

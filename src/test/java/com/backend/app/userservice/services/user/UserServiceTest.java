@@ -64,9 +64,9 @@ class UserServiceTest {
         userWith2FA.setPassword(passwordEncoder.encode("54321"));
         userWith2FA.setIsUsing2FA(true);
 
-        when(userRepository.findAll()).thenReturn(Arrays.asList(user1, userWith2FA));
-        when(userRepository.findByUsername("user1")).thenReturn(Optional.of(user1));
-        when(userRepository.findByUsername("userWith2FA")).thenReturn(Optional.of(userWith2FA));
+        // when(userRepository.findAll()).thenReturn(Arrays.asList(user1, userWith2FA));
+        // when(userRepository.findByUsername("user1")).thenReturn(Optional.of(user1));
+        // when(userRepository.findByUsername("userWith2FA")).thenReturn(Optional.of(userWith2FA));
     }
 
     // <Action>_<Predicate>_<Result>_<Reason>

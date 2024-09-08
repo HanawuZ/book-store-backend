@@ -21,24 +21,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class User implements UserDetails {
     @Id
     @JsonProperty("id")    
+    @Column(name = "id")
     private String id;
 
     @OneToMany(fetch = FetchType.EAGER)
     private Set<Authority> authorities;
 
     @JsonProperty("username")
+    @Column(name = "username")
     private String username;
 
     @JsonProperty("password")
     @Nullable
+    @Column(name = "password")
     private String password;
 
     @JsonProperty("profilePicture")
     @Nullable
+    @Column(name = "profile_picture")
     private String profilePicture;
 
     @JsonProperty("email")
     @Nullable
+    @Column(name = "email")
     private String email;
 
     @JsonProperty("createdDate")
@@ -47,13 +52,18 @@ public class User implements UserDetails {
     private Date createdDate;
     
     @JsonProperty("accountNonExpired")
+    @Nullable
+    @Column(name = "account_non_expired")
     private Boolean accountNonExpired;
     
     @JsonProperty("accountNonLocked")
+    @Nullable
+    @Column(name = "account_non_locked")
     private Boolean accountNonLocked;
 
     @JsonProperty("credentialsNonExpired")
     @Nullable
+    @Column(name = "credentials_non_expired")
     private Boolean credentialsNonExpired;
     
     @JsonProperty("providerId")
@@ -67,7 +77,11 @@ public class User implements UserDetails {
     @JsonProperty("enabled")
     private Boolean enabled;
 
+    @JsonProperty("isUsing2FA")
+    @Column(name = "is_using_2fa")
     private Boolean isUsing2FA;
 
+    @JsonProperty("secret")
+    @Column(name = "secret")
     private String secret;
 }

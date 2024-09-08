@@ -1,7 +1,7 @@
 package com.backend.app.boostrapper.config.security;
 
-import com.backend.app.boostrapper.config.middleware.HttpRequestFilter;
-import com.backend.app.boostrapper.config.middleware.JwtAuthenticationFilter;
+import com.backend.app.boostrapper.config.security.filters.HttpRequestFilter;
+import com.backend.app.boostrapper.config.security.filters.JwtAuthenticationFilter;
 import com.backend.app.userservice.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
 @EnableWebSecurity(debug = true)
 @Configuration
 public class AppSecurityConfig {
@@ -23,9 +23,11 @@ public class AppSecurityConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
-    public AppSecurityConfig(UserService userService) {
-        this.httpRequestFilter = new HttpRequestFilter();
-        this.jwtAuthenticationFilter = new JwtAuthenticationFilter(userService);
+    public AppSecurityConfig(
+            HttpRequestFilter httpRequestFilter,
+            JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.httpRequestFilter = httpRequestFilter;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     /**
@@ -34,18 +36,24 @@ public class AppSecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilter(HttpSecurity http) throws Exception {
-        return http
-                .csrf(csrf -> csrf.disable())
-                .logout(logout -> logout.disable())
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/authorized").authenticated())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+        HttpSecurity disableFilters = disableFilters(http);
+        HttpSecurity configureRoutes = configureRoutes(disableFilters);
+        configureRoutes
                 .addFilterAfter(httpRequestFilter, CsrfFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, AuthorizationFilter.class)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .build();
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return disableFilters.build();
     }
- 
-    private HttpSecurity disableFilter(HttpSecurity http) {
-        return null;
+
+    private HttpSecurity disableFilters(HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf.disable())
+                .logout(logout -> logout.disable());
+    }
+
+    private HttpSecurity configureRoutes(HttpSecurity http) throws Exception {
+        return http
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/authorized").authenticated())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
     }
 }

@@ -1,10 +1,7 @@
-package com.backend.app.boostrapper.config.middleware;
+package com.backend.app.boostrapper.config.security.filters;
 
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import com.backend.app.shared.libraries.http.BaseResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.io.IOException;
 public class HttpRequestFilter extends OncePerRequestFilter {
 
     // Create POST, PUT, PATCH string array
@@ -49,6 +46,15 @@ public class HttpRequestFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("application/json");
+        
+            String error = String.format("Internal server error: %s", e.getMessage());
+            BaseResponse<String> responseObj = new BaseResponse<>(5000, error, null);
+            String jsonResponse = objectMapper.writeValueAsString(responseObj);
+            // Write JSON to response
+            response.getWriter().write(jsonResponse);
+
         }
     }
 }
