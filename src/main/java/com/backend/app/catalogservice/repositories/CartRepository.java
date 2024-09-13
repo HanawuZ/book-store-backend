@@ -46,8 +46,8 @@ public class CartRepository {
     @Transactional
     public Boolean upsertCartItem(AddItemRequest request) {
         try {
-            Integer affectedRows = entityManager.createNativeQuery("REPLACE INTO carts (user_id, book_id, quantity) VALUES (:userId, :bookId, :quantity)", Cart.class)
-                .setParameter("userId", request.getUserId())
+            Integer affectedRows = entityManager.createNativeQuery("REPLACE INTO carts (customer_id, book_id, quantity) VALUES (:customerId, :bookId, :quantity)", Cart.class)
+                .setParameter("customerId", request.getCustomerId())
                 .setParameter("bookId", request.getBookId())
                 .setParameter("quantity", request.getQuantity())
                 .executeUpdate();
@@ -65,13 +65,13 @@ public class CartRepository {
         try {
             Integer affectedRows = 0;
             if (updatedItem.getQuantity() == 0) {
-                affectedRows = entityManager.createNativeQuery("DELETE FROM carts WHERE user_id = :userId AND book_id = :bookId", Cart.class)
-                    .setParameter("userId", updatedItem.getUser().getId())
+                affectedRows = entityManager.createNativeQuery("DELETE FROM carts WHERE customer_id = :customerId AND book_id = :bookId", Cart.class)
+                    .setParameter("userId", updatedItem.getCustomer().getId())
                     .setParameter("bookId", updatedItem.getBook().getId())
                     .executeUpdate();
             } else {
                 affectedRows = entityManager.createNativeQuery("UPDATE carts SET quantity = :quantity WHERE user_id = :userId AND book_id = :bookId", Cart.class)
-                    .setParameter("userId", updatedItem.getUser().getId())
+                    .setParameter("userId", updatedItem.getCustomer().getId())
                     .setParameter("bookId", updatedItem.getBook().getId())
                     .setParameter("quantity", updatedItem.getQuantity())
                     .executeUpdate();

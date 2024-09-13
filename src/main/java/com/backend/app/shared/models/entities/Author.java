@@ -19,40 +19,31 @@ import lombok.Data;
 @Table(name = "authors")
 public class Author implements Serializable {
     @Id
-    @JsonProperty("id")
     @Column(name = "id")
     private String id;
 
-    @JsonProperty("pseudonym")
     @Column(name = "pseudonym")
     private String pseudonym;
 
-    @JsonProperty("firstname")
     @Column(name = "firstname", nullable = false)
     private String firstname;
 
-    @JsonProperty("lastname")
     @Column(name = "lastname")
     private String lastname;
 
-    @JsonProperty("dob")
     @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     @Column(name = "dob")
     private LocalDate dob;
 
-    @JsonProperty("createdDate")
     @Column(name = "created_date")
     private Date createdDate;
 
-    @JsonProperty("createdBy")
     @Column(name = "created_by")
     private String createdBy;
 
-    @JsonProperty("updatedDate")
     @Column(name = "updated_date")
     private Date updatedDate;
 
-    @JsonProperty("updatedBy")
     @Column(name = "updated_by")
     private String updatedBy;
 }

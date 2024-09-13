@@ -56,7 +56,7 @@ public class ShoppingCartController {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(new BaseResponse<>(4000, "Book id is required", null));
             }
 
-            if (request.getUserId() == null || request.getUserId().isEmpty()) {
+            if (request.getCustomerId() == null || request.getCustomerId().isEmpty()) {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(new BaseResponse<>(4000, "User id is required", null));
             }
 
@@ -84,7 +84,7 @@ public class ShoppingCartController {
             if (request.getBookId() == null || request.getBookId().isEmpty()) {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(new BaseResponse<>(4000, "Book id is required", null));
             }
-            if (request.getUserId() == null || request.getUserId().isEmpty()) {
+            if (request.getCustomerId() == null || request.getCustomerId().isEmpty()) {
                 return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(new BaseResponse<>(4000, "User id is required", null));
             }
 

@@ -20,7 +20,7 @@ public class JwtUtility {
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", user.getUsername());
-
+        claims.put("userId", user.getId());
         if (user.getProviderId() != null) claims.put("providerId", user.getProviderId());
         if (user.getProvider() != null) claims.put("provider", user.getProvider());
         if (user.getEmail() != null) claims.put("email", user.getEmail());
@@ -43,12 +43,16 @@ public class JwtUtility {
         return extractClaim(token, claims -> claims.get("username", String.class));
     }
 
+    public String extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", String.class));
+    }
+
     public Boolean validateToken(String token) {
         return (token != null && isTokenExpired(token).equals(false));
     }
 
     // ---------+ Private Methods +-----------------------------------------------
-    public Date extractExpiration(String token) {
+    private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 

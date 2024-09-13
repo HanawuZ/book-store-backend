@@ -62,7 +62,7 @@ public class ShoppingCartService {
     public BaseResponse<?> addItemToCart(AddItemRequest request) {
         try {
 
-            List<Cart> carts = cartRepository.getCartByUserId(request.getUserId());
+            List<Cart> carts = cartRepository.getCartByUserId(request.getCustomerId());
             if (carts.isEmpty()) {
                 return new BaseResponse<>(4000, "Cart is empty", null);
             }
@@ -92,7 +92,7 @@ public class ShoppingCartService {
     public BaseResponse<?> updateCartItem(AddItemRequest request) {
         try {
 
-            List<Cart> carts = cartRepository.getCartByUserId(request.getUserId());
+            List<Cart> carts = cartRepository.getCartByUserId(request.getCustomerId());
             if (carts.isEmpty()) {
                 return new BaseResponse<>(4000, "Cart is empty", null);
             }

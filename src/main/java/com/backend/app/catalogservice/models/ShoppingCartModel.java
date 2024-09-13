@@ -76,8 +76,8 @@ public class ShoppingCartModel {
         @JsonProperty("quantity")
         private Integer quantity;
 
-        @JsonProperty("userId")
-        private String userId;
+        @JsonProperty("customerId")
+        private String customerId;
     }
 
 }

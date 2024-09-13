@@ -12,9 +12,7 @@ import lombok.Data;
 @Table(name = "authorities")
 public class Authority implements GrantedAuthority {
     @Id
-    @JsonProperty("id")
     private String id;
 
-    @JsonProperty("authority")
     public String authority;
 }

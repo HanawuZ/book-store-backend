@@ -1,8 +1,9 @@
 package com.backend.app.shared.models.entities;
 
+import java.time.LocalDate;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,29 +27,37 @@ public class SaleItem {
     @JoinColumn(name = "order_id")
     private SaleOrder saleOrder;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "book_id")
-    private Book book;
-
     @Column(name = "price")
     private Double price;
 
     @Column(name = "quantity")
     private Integer quantity;
 
-    @JsonProperty("createdDate")
+    @Column(name = "isbn")
+    private String isbn;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "genre")
+    private String genre;
+
+    @Column(name = "publication_year")
+    @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
+    private LocalDate publicationYear;
+
+    @Column(name = "publisher_name")
+    private String publisherName;
+
     @Column(name = "created_date")
     private Date createdDate;
 
-    @JsonProperty("createdBy")
     @Column(name = "created_by")
     private String createdBy;
 
-    @JsonProperty("updatedDate")
     @Column(name = "updated_date")
     private Date updatedDate;
 
-    @JsonProperty("updatedBy")
     @Column(name = "updated_by")
     private String updatedBy;
 }

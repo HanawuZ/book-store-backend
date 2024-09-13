@@ -16,39 +16,30 @@ import lombok.Data;
 @Table(name = "publishers")
 public class Publisher implements Serializable{
     @Id
-    @JsonProperty("id")
     @Column(name = "id")
     private String id;
 
-    @JsonProperty("name")
     @Column(name = "name")
     private String name;
 
-    @JsonProperty("address")
     @Column(name = "address")
     private String address;
 
-    @JsonProperty("phoneNumber")
     @Column(name = "phone_number")
     private String phoneNumber;
     
-    @JsonProperty("email")
     @Column(name = "email")
     private String email;
 
-    @JsonProperty("createdDate")
     @Column(name = "created_date")
     private Date createdDate;
 
-    @JsonProperty("createdBy")
     @Column(name = "created_by")
     private String createdBy;
 
-    @JsonProperty("updatedDate")
     @Column(name = "updated_date")
     private Date updatedDate;
 
-    @JsonProperty("updatedBy")
     @Column(name = "updated_by")
     private String updatedBy;
 
