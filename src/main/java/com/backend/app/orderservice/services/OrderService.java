@@ -21,8 +21,12 @@ import com.backend.app.shared.models.entities.OrderStatus;
 import com.backend.app.shared.models.entities.SaleItem;
 import com.backend.app.shared.models.entities.SaleOrder;
 
+interface IOrderService {
+    BaseResponse<String> createOrder(CreateOrderRequest request);
+}
+
 @Service
-public class OrderService {
+public class OrderService implements IOrderService {
     
     private CustomerAddressRepository customerAddressRepository;
     private SaleItemRepository saleItemRepository;

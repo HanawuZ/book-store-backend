@@ -11,8 +11,20 @@ import com.backend.app.shared.models.entities.Cart;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+
+
+interface ICartRepository {
+    
+    List<Cart> getCartByCustomerId(String customerId);
+    
+    Boolean upsertCartItem(AddItemRequest request);
+    
+    Boolean deleteItem(String customerId, String bookId);
+    
+}
+
 @Repository
-public class CartRepository {
+public class CartRepository implements ICartRepository {
     
     @PersistenceContext
     private EntityManager entityManager;

@@ -9,8 +9,12 @@ import com.backend.app.shared.models.entities.Customer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+interface ICustomerRepository {
+    Optional<Customer> getCustomerById(String id);
+}
+
 @Repository
-public class CustomerRepository {
+public class CustomerRepository implements ICustomerRepository {
     
     @PersistenceContext
     private EntityManager entityManager;

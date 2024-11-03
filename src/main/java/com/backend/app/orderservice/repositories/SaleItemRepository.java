@@ -13,8 +13,15 @@ import jakarta.transaction.Transactional;
 import com.backend.app.shared.models.entities.SaleItem;
 import com.backend.app.shared.models.entities.SaleOrder;
 
+
+interface ISaleItemRepository {
+
+    List<CartItemQueryResult> getCartItemByCustomerId(String customerId);
+
+}
+
 @Repository
-public class SaleItemRepository {
+public class SaleItemRepository implements ISaleItemRepository {
     @PersistenceContext
     private EntityManager entityManager;
 

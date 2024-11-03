@@ -2,7 +2,6 @@ package com.backend.app.catalogservice.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -15,8 +14,19 @@ import com.backend.app.shared.libraries.http.BaseResponse;
 import com.backend.app.shared.models.entities.Book;
 import com.backend.app.shared.models.entities.Cart;
 
+
+interface IShoppingCartService {
+    
+    BaseResponse<ShoppingCartResponse> getCartItemsByUserId(String userId);
+    
+    BaseResponse<?> addItemToCart(AddItemRequest request);
+    
+    BaseResponse<?> deleteCartItem(String customerId, String bookId);
+    
+}
+
 @Service
-public class ShoppingCartService {
+public class ShoppingCartService implements IShoppingCartService {
 
     private CartRepository cartRepository;
 
@@ -86,9 +96,9 @@ public class ShoppingCartService {
     }
 
     
-    public BaseResponse<?> deleteCartItem(String userId, String bookId) {
+    public BaseResponse<?> deleteCartItem(String customerId, String bookId) {
         try {
-            Boolean completed = cartRepository.deleteItem(userId, bookId);
+            Boolean completed = cartRepository.deleteItem(customerId, bookId);
 
             if (completed.equals(false)) {
                 return new BaseResponse<>(4000, "Failed to delete item from cart", null);

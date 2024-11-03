@@ -14,10 +14,14 @@ import com.backend.app.shared.libraries.http.BaseResponse;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+interface IOrderController {
+    ResponseEntity<BaseResponse<String>> createOrder(CreateOrderRequest request);
+}
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/orders")
-public class OrderController {
+public class OrderController implements IOrderController {
     
     private OrderService orderService;
 

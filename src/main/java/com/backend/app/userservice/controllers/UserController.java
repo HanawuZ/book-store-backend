@@ -15,10 +15,19 @@ import com.backend.app.userservice.services.UserService;
 import com.backend.app.shared.libraries.validator.PatternMatch;
 import com.backend.app.shared.libraries.http.BaseResponse;
 
+
+interface IUserController {
+
+    ResponseEntity<BaseResponse<String>> userSignIn(SignInRequest signInRequest);
+
+    ResponseEntity<BaseResponse<String>> userSignUp(SignUpRequest signUpRequest);
+
+}
+
 @RestController
 @RequestMapping("api/v1/users")
 @CrossOrigin
-public class UserController {
+public class UserController implements IUserController {
 
     private UserService userService;
 

@@ -13,8 +13,15 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
+interface IUserRepository {
+    Optional<User> findByUsernameOrEmail(String username, String email);
+    Optional<User> findById(String id);
+    Boolean createCustomer(User user, Customer customer, UserMapping userMapping);
+    Boolean updateUser(User user);
+}
+
 @Repository
-public class UserRepository {
+public class UserRepository implements IUserRepository {
     
     @PersistenceContext
     private EntityManager entityManager;
