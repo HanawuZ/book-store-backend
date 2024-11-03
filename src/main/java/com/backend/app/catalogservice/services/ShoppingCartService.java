@@ -62,26 +62,22 @@ public class ShoppingCartService {
     public BaseResponse<?> addItemToCart(AddItemRequest request) {
         try {
 
-            List<Cart> carts = cartRepository.getCartByUserId(request.getCustomerId());
-            if (carts.isEmpty()) {
-                return new BaseResponse<>(4000, "Cart is empty", null);
-            }
-
+            List<Cart> carts = cartRepository.getCartByCustomerId(request.getCustomerId());
+            
             for (Integer i = 0; i < carts.size(); i++) {
                 Book book = carts.get(i).getBook();
                 if (book.getId().equals(request.getBookId())) {
-                    Integer newQty = carts.get(i).getQuantity() + request.getQuantity();
-                    request.setQuantity(newQty);
+                    request.setQuantity(request.getQuantity());
                     break;
                 }
             }
 
             Boolean completed = cartRepository.upsertCartItem(request);
             if (completed.equals(false)) {
-                return new BaseResponse<>(4000, "Failed to add item to cart", null);
+                return new BaseResponse<>(4000, "Failed to update item to cart", null);
             }
 
-            return new BaseResponse<>(2000, "Item added to cart successfully", null);
+            return new BaseResponse<>(2000, "Successfully update items to cart", null);
         } catch (Exception e) {
             e.printStackTrace();
             String error = String.format("Internal server error: %s", e.getMessage());
@@ -89,42 +85,7 @@ public class ShoppingCartService {
         }
     }
 
-    public BaseResponse<?> updateCartItem(AddItemRequest request) {
-        try {
-
-            List<Cart> carts = cartRepository.getCartByUserId(request.getCustomerId());
-            if (carts.isEmpty()) {
-                return new BaseResponse<>(4000, "Cart is empty", null);
-            }
-
-            Cart updatedItem = null;
-            for (Integer i = 0; i < carts.size(); i++) {
-                Book book = carts.get(i).getBook();
-                if (book.getId().equals(request.getBookId())) {
-                    updatedItem = carts.get(i);
-                    updatedItem.setQuantity(request.getQuantity());
-                    break;
-                }
-            }
-
-            if (updatedItem == null) {
-                return new BaseResponse<>(4000, "Cannot edit quantity of this item", null);
-            }
-
-            Boolean complete = cartRepository.updateCartItemQuantity(updatedItem);
-            if (complete.equals(false)) {
-                return new BaseResponse<>(4000, "Failed to update item quantity", null);
-            }
-
-            return new BaseResponse<>(2000, "Item quantity updated successfully", null);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            String error = String.format("Internal server error: %s", e.getMessage());
-            return new BaseResponse<>(5000, error, null);
-        }
-    }
-
+    
     public BaseResponse<?> deleteCartItem(String userId, String bookId) {
         try {
             Boolean completed = cartRepository.deleteItem(userId, bookId);

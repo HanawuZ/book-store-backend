@@ -22,7 +22,7 @@ public class SaleItemRepository {
         try {
 
             List<CartItemQueryResult> results = entityManager.createNativeQuery(
-                    "SELECT b.genre, b.isbn, b.title, c.quantity, b.price, b.publication_year, " +
+                    "SELECT b.id as product_id, b.genre, b.isbn, b.title, c.quantity, b.price, b.publication_year, " +
                     "cus.firstname as customer_firstname, cus.lastname as customer_lastname, " +
                     "cus.phone_one as customer_phone_one, cus.phone_two as customer_phone_two, " +
                     "p.name as publisher_name " +
@@ -45,19 +45,31 @@ public class SaleItemRepository {
     }
 
     @Transactional
-    public boolean createSaleOrder(SaleOrder saleOrder, List<SaleItem> saleItems, String customerId) {
+    public Boolean createSaleOrder(SaleOrder saleOrder, List<SaleItem> saleItems, String customerId) {
         try {
+
+            // Update copiesAvailable in table `books`
+            String updateQuery = "UPDATE books SET copies_available = copies_available - :quantity WHERE id = :bookId";
+            for (SaleItem saleItem : saleItems) {
+                entityManager.createNativeQuery(updateQuery)
+                    .setParameter("quantity", saleItem.getQuantity())
+                    .setParameter("bookId", saleItem.getProductId())
+                    .executeUpdate();
+            }
+            
+
             entityManager.persist(saleOrder);
             saleItems.forEach(entityManager::persist);
 
             Integer affectedRows = entityManager.createNativeQuery("DELETE FROM carts WHERE customer_id = :customerId")
                 .setParameter("customerId", customerId)
                 .executeUpdate();
-
+            
+            entityManager.flush();
             return affectedRows > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw exception;
         }
     }
 

@@ -27,6 +27,9 @@ public class SaleItem {
     @JoinColumn(name = "order_id")
     private SaleOrder saleOrder;
 
+    @Column(name = "product_id")
+    private String productId;
+
     @Column(name = "price")
     private Double price;
 

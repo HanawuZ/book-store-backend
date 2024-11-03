@@ -9,6 +9,7 @@ import lombok.Data;
 public class CartItemQueryResult {
 
     public CartItemQueryResult(
+        String productId,
         String genre, 
         String isbn, 
         String title, 
@@ -21,6 +22,7 @@ public class CartItemQueryResult {
         String customerPhoneOne, 
         String customerPhoneTwo
     ) {
+        this.productId = productId;
         this.genre = genre;
         this.isbn = isbn;
         this.title = title;
@@ -33,6 +35,9 @@ public class CartItemQueryResult {
         this.customerPhoneOne = customerPhoneOne;
         this.customerPhoneTwo = customerPhoneTwo;
     }
+    @Column(name = "product_id")
+    private String productId;
+
     @Column(name = "genre")
     private String genre;
 

@@ -78,29 +78,6 @@ public class ShoppingCartController {
         }
     }
 
-    @PatchMapping("/update-item")
-    public ResponseEntity<BaseResponse<?>> updateCartItem(@RequestBody AddItemRequest request) {
-        try {
-            if (request.getBookId() == null || request.getBookId().isEmpty()) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(new BaseResponse<>(4000, "Book id is required", null));
-            }
-            if (request.getCustomerId() == null || request.getCustomerId().isEmpty()) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(new BaseResponse<>(4000, "User id is required", null));
-            }
-
-            BaseResponse<?> response = shoppingCartService.updateCartItem(request);
-            if (response.getCode() != 2000) {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(response);
-            }
-            return ResponseEntity.status(HttpServletResponse.SC_OK).body(response);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            String error = String.format("Internal server error: %s", e.getMessage());
-            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new BaseResponse<>(5000, error, null));
-        }
-    }
-    
     @DeleteMapping("/delete-item")
     public ResponseEntity<BaseResponse<?>> deleteCartItem(@RequestParam("userId") String userId, @RequestParam("bookId") String bookId) {
         try {

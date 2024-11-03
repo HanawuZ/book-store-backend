@@ -17,16 +17,16 @@ public class CartRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Cart> getCartByUserId(String userId) {
+    public List<Cart> getCartByCustomerId(String customerId) {
         try {
-            List<Cart> results = entityManager.createNativeQuery("SELECT * FROM carts WHERE user_id = :userId", Cart.class)
-                .setParameter("userId", userId)
+            List<Cart> results = entityManager.createNativeQuery("SELECT * FROM carts WHERE customer_id = :customerId", Cart.class)
+                .setParameter("customerId", customerId)
                 .getResultList();
                 
             return results;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw exception;
         }
     }
 
@@ -37,9 +37,9 @@ public class CartRepository {
                 .getResultList();
                 
             return results;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw exception;
         }
     }
 
@@ -54,9 +54,9 @@ public class CartRepository {
             
             return affectedRows > 0;
            
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw exception;
         }
     }
 
@@ -77,23 +77,23 @@ public class CartRepository {
                     .executeUpdate();
             }
             return affectedRows > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw exception;
         }
     }
 
     @Transactional
-    public Boolean deleteItem(String userId, String bookId) {
+    public Boolean deleteItem(String customerId, String bookId) {
         try {
-            Integer affectedRows = entityManager.createNativeQuery("DELETE FROM carts WHERE user_id = :userId AND book_id = :bookId", Cart.class)
-                .setParameter("userId", userId)
+            Integer affectedRows = entityManager.createNativeQuery("DELETE FROM carts WHERE customer_id = :customerId AND book_id = :bookId", Cart.class)
+                .setParameter("customerId", customerId)
                 .setParameter("bookId", bookId)
                 .executeUpdate();
             return affectedRows > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw exception;
         }
     }
     

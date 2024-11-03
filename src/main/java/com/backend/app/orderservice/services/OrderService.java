@@ -93,6 +93,7 @@ public class OrderService {
             for (CartItemQueryResult cartItem : cartItems) {
                 SaleItem item = new SaleItem();
                 item.setId(UUID.randomUUID().toString());
+                item.setProductId(cartItem.getProductId());
                 item.setQuantity(cartItem.getQuantity());
                 item.setPrice(cartItem.getPrice());
                 item.setGenre(cartItem.getGenre());
