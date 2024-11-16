@@ -7,9 +7,9 @@ import com.backend.app.shared.libraries.security.jwt.JwtUtility;
 
 @Configuration
 public class JwtUtilityConfig {
-    
-    @Bean
-    public JwtUtility jwtUtility() {
-        return new JwtUtility();
-    }
+
+  @Bean
+  public JwtUtility jwtUtility() {
+    return new JwtUtility();
+  }
 }

@@ -6,9 +6,12 @@ import lombok.Data;
 
 @Data
 public class SignInRequest {
-     @JsonProperty("username")
-    private String username;
+  @JsonProperty("username")
+  private String username;
 
-    @JsonProperty("password")
-    private String password;
+  @JsonProperty("email")
+  private String email;
+
+  @JsonProperty("password")
+  private String password;
 }
