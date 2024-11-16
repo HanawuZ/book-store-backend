@@ -38,7 +38,7 @@ public class AppSecurityConfig {
         HttpSecurity configureRoutes = configureRoutes(disableFilters);
         configureRoutes
                 .addFilterAfter(httpRequestFilter, CsrfFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, AuthorizationFilter.class)
+                // .addFilterBefore(jwtAuthenticationFilter, AuthorizationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return disableFilters.build();
     }
