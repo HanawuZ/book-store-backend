@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.backend.app.shared.error.ErrorMessage;
 import com.backend.app.shared.libraries.http.BaseResponse;
 import com.backend.app.shared.libraries.validator.PatternMatch;
 import com.backend.app.shared.libraries.validator.ValidateValue;
@@ -19,10 +18,10 @@ import com.backend.app.shared.models.entities.UserMapping;
 import com.backend.app.userservice.user.models.SignInRequest;
 import com.backend.app.userservice.user.models.SignUpRequest;
 import com.backend.app.userservice.user.repositories.UserRepository;
+import com.backend.app.shared.libraries.security.authenticator.GoogleAuthenticatorService;
 
 interface UserServiceInterface {
   public BaseResponse<String> signIn(SignInRequest request);
-
   public BaseResponse<String> createUserFromSignUp(SignUpRequest request);
 }
 
@@ -31,14 +30,17 @@ public class UserService implements UserServiceInterface {
 
   private PasswordEncoder passwordEncoder;
   private UserRepository userRepository;
+  private GoogleAuthenticatorService googleAuthenticatorService;
 
   @Autowired
   public UserService(
     PasswordEncoder passwordEncoder,
-    UserRepository userRepository
+    UserRepository userRepository,
+    GoogleAuthenticatorService googleAuthenticatorService
   ) {
     this.passwordEncoder = passwordEncoder;
     this.userRepository = userRepository;
+    this.googleAuthenticatorService = googleAuthenticatorService;
   }
 
   @Override
@@ -148,7 +150,7 @@ public class UserService implements UserServiceInterface {
       newUser.setIsUsing2FA(false);
       newUser.setCreatedDate(createdDate);
       newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-      // newUser.setSecret(googleAuthenticatorService.generateSecretKey());
+      newUser.setSecret(googleAuthenticatorService.generateSecretKey());
 
       Customer customer = new Customer();
       customer.setId(UUID.randomUUID().toString());
