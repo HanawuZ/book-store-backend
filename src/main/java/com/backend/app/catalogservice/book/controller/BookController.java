@@ -30,8 +30,11 @@ public class BookController {
   @PostMapping("/upload")
   public  ResponseEntity<BaseResponse<String>> upload(@RequestParam("file") MultipartFile file) {
     try {
-      bookService.createBookFromUpload(file);
-      return null;
+      BaseResponse<String> response = bookService.createBookFromUpload(file);
+      if (response.getCode() != 2001) {
+        return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(response);
+      }
+      return ResponseEntity.status(HttpServletResponse.SC_CREATED).body(response);
     } catch (Exception exception) {
       exception.printStackTrace();
       String error = ErrorMessage.getErrorMessage(exception);

@@ -2,7 +2,6 @@ package com.backend.app.catalogservice.book.models;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -15,7 +14,7 @@ public class UploadBook {
 
   private String genre;
 
-  private String publicationYear;
+  private LocalDate publicationYear;
 
   private Integer copiesAvailable;
 

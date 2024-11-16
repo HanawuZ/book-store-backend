@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +59,7 @@ public class UploadBookCsvHelper extends AbstractCsvHelper {
 
       System.out.println("CSV file has valid headers.");
       System.out.println(indexColumnMap);
-      List<UploadBook> uploadBooks = List.of();
+      List<UploadBook> uploadBooks = new ArrayList<UploadBook>();
 
       List<HashMap<String, String>> bookHashMapList = new ArrayList<>();
 
@@ -65,7 +69,7 @@ public class UploadBookCsvHelper extends AbstractCsvHelper {
         System.out.println("Reading next row...");
         for (int i = 0; i < values.length; i++) {
           String col = indexColumnMap.get(i);
-          
+
           System.out.println("Column: " + indexColumnMap.get(i) + ", Value: " + values[i]);
           hashMapUploadBook.put(col, values[i]);
 
@@ -90,22 +94,30 @@ public class UploadBookCsvHelper extends AbstractCsvHelper {
 
       for (HashMap<String, String> hashMapUploadBook : bookHashMapList) {
         UploadBook uploadBook = new UploadBook();
-        uploadBook.setIsbn(hashMapUploadBook.get("isbn"));
+        
+        String isbn = String.format("%.0f", Double.parseDouble(hashMapUploadBook.get("isbn")));
+
+        
+        // Parse date from format MM/dd/yyyy string into LocalDate
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+        LocalDate publicationYear = LocalDate.parse(hashMapUploadBook.get("publicationYear"), formatter);
+        
+        uploadBook.setIsbn(isbn);
         uploadBook.setTitle(hashMapUploadBook.get("title"));
         uploadBook.setGenre(hashMapUploadBook.get("genre"));
-        uploadBook.setPublicationYear(hashMapUploadBook.get("publicationYear"));
+        uploadBook.setPublicationYear(publicationYear);
         uploadBook.setCopiesAvailable(Integer.parseInt(hashMapUploadBook.get("copiesAvailable")));
         uploadBook.setPrice(Double.parseDouble(hashMapUploadBook.get("price")));
         uploadBooks.add(uploadBook);
-
       }
 
       return uploadBooks;
     } catch (Exception exception) {
       throw exception;
     } finally {
-      if (csvReader != null)
+      if (csvReader != null) {
         csvReader.close();
+      }
       inputStream.close();
     }
   }
