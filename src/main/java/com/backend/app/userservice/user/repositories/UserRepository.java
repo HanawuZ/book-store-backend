@@ -9,19 +9,18 @@ import com.backend.app.shared.models.entities.User;
 import com.backend.app.shared.models.entities.UserMapping;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 interface IUserRepository {
   Optional<User> findByUsernameOrEmail(String username, String email);
-
   Optional<User> findById(String id);
-
   Boolean createCustomerUser(User user, Customer customer, UserMapping userMapping);
-
   Boolean updateUser(User user);
 }
 
+@Repository
 public class UserRepository {
 
   @PersistenceContext
@@ -35,6 +34,8 @@ public class UserRepository {
           .setParameter("email", email)
           .getSingleResult();
       return Optional.of((User) user);
+    } catch (NoResultException exception) {
+      return Optional.empty();
     } catch (Exception exception) {
       throw exception;
     }

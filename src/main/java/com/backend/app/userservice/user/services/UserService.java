@@ -5,7 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import com.backend.app.shared.error.ErrorMessage;
 import com.backend.app.shared.libraries.http.BaseResponse;
@@ -14,8 +16,8 @@ import com.backend.app.shared.libraries.validator.ValidateValue;
 import com.backend.app.shared.models.entities.Customer;
 import com.backend.app.shared.models.entities.User;
 import com.backend.app.shared.models.entities.UserMapping;
-import com.backend.app.userservice.models.SignInRequest;
-import com.backend.app.userservice.models.SignUpRequest;
+import com.backend.app.userservice.user.models.SignInRequest;
+import com.backend.app.userservice.user.models.SignUpRequest;
 import com.backend.app.userservice.user.repositories.UserRepository;
 
 interface UserServiceInterface {
@@ -24,11 +26,13 @@ interface UserServiceInterface {
   public BaseResponse<String> createUserFromSignUp(SignUpRequest request);
 }
 
+@Service
 public class UserService implements UserServiceInterface {
 
   private PasswordEncoder passwordEncoder;
   private UserRepository userRepository;
 
+  @Autowired
   public UserService(
     PasswordEncoder passwordEncoder,
     UserRepository userRepository
@@ -124,7 +128,6 @@ public class UserService implements UserServiceInterface {
       if (!PatternMatch.isEmailValid(request.getEmail())) {
         return new BaseResponse<>(4000, "Email is not valid", null);
       }
-
 
       Optional<User> existedUser = userRepository.findByUsernameOrEmail(request.getUsername(), request.getEmail());
 

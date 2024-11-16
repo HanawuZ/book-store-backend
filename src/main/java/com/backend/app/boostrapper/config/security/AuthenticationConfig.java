@@ -17,19 +17,19 @@ import com.backend.app.shared.libraries.security.authenticator.GoogleAuthenticat
 @Configuration
 public class AuthenticationConfig {
 
-    @Bean
-    public ClientRegistrationRepository clientRegistrationRepository() {
-        return new InMemoryClientRegistrationRepository(OAuthConfig.googleClientRegistration());
-    }
+  @Bean
+  public ClientRegistrationRepository clientRegistrationRepository() {
+    return new InMemoryClientRegistrationRepository(OAuthConfig.googleClientRegistration());
+  }
 
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder encoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public GoogleAuthenticatorService googleAuthenticatorService() {
-        return new GoogleAuthenticatorService();
-    }
+  @Bean
+  public GoogleAuthenticatorService googleAuthenticatorService() {
+    return new GoogleAuthenticatorService();
+  }
 
 }

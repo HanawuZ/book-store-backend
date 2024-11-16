@@ -1,4 +1,4 @@
-package com.backend.app.userservice.models;
+package com.backend.app.userservice.user.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
