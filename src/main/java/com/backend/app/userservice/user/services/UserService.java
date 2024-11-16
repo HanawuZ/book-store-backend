@@ -10,7 +10,9 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2Res
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.backend.app.boostrapper.config.redis.RedisUtilities;
 import com.backend.app.shared.libraries.http.BaseResponse;
+import com.backend.app.shared.libraries.redis.RedisValueUtility;
 import com.backend.app.shared.libraries.validator.PatternMatch;
 import com.backend.app.shared.libraries.validator.ValidateValue;
 import com.backend.app.shared.models.entities.Customer;
@@ -24,6 +26,7 @@ import com.backend.app.shared.libraries.security.jwt.JwtUtility;
 
 interface UserServiceInterface {
   public BaseResponse<String> signIn(SignInRequest request);
+
   public BaseResponse<String> createUserFromSignUp(SignUpRequest request);
 }
 
@@ -33,17 +36,22 @@ public class UserService implements UserServiceInterface {
   private PasswordEncoder passwordEncoder;
   private UserRepository userRepository;
   private GoogleAuthenticatorService googleAuthenticatorService;
-  private JwtUtility jwtUtility = new JwtUtility();
+  private JwtUtility jwtUtility;
+  private RedisValueUtility redisValueUtility;
+  private static final Integer MAX_LOGIN_ATTEMPT_LIMIT = 5;
 
   @Autowired
   public UserService(
-    PasswordEncoder passwordEncoder,
-    UserRepository userRepository,
-    GoogleAuthenticatorService googleAuthenticatorService
-  ) {
+      PasswordEncoder passwordEncoder,
+      UserRepository userRepository,
+      GoogleAuthenticatorService googleAuthenticatorService,
+      JwtUtility jwtUtility,
+      RedisValueUtility redisValueUtility) {
     this.passwordEncoder = passwordEncoder;
     this.userRepository = userRepository;
     this.googleAuthenticatorService = googleAuthenticatorService;
+    this.jwtUtility = jwtUtility;
+    this.redisValueUtility = redisValueUtility;
   }
 
   @Override
@@ -66,7 +74,6 @@ public class UserService implements UserServiceInterface {
         return new BaseResponse<>(4000, "Password is required", null);
       }
 
-
       Optional<User> user = userRepository.findByUsernameOrEmail(request.getUsername(), request.getEmail());
       if (user.isEmpty()) {
         return new BaseResponse<>(4000, "User not found", null);
@@ -75,21 +82,25 @@ public class UserService implements UserServiceInterface {
       // Check if password is matched
       // TODO: Should blocked request from IP
       if (!passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
-        // String key = String.format("attempt_%s", user.get().getId());
-        // String count = redisValueUtility.getValue(key);
+        String key = String.format("attempt_%s", user.get().getId());
+        String count = redisValueUtility.getValue(key);
+
+        if (count == null) {
+          count = "1";
+          redisValueUtility.setValue(key, count, 5, TimeUnit.MINUTES);
+        } else {
+          Integer newCount = Integer.parseInt(count) + 1;
+          if (newCount > MAX_LOGIN_ATTEMPT_LIMIT) {
+            return new BaseResponse<>(4290, "Too many login attempts", null);
+          }
+          redisValueUtility.setValue(key, String.valueOf(newCount), 5, TimeUnit.MINUTES);
+        }
+
         return new BaseResponse<>(4001, "Invalid password!", null);
       }
 
-
-      // if (user.get().getIsUsing2FA().equals(true)) {
-      // String redirectUrl =
-      // String.format("https://example.com/users/verify?userId=%s",
-      // user.get().getId());
-      // return new BaseResponse<>(2001, "Please verify code at api verify",
-      // redirectUrl);
-      // }
-
-      return new BaseResponse<>(2001, "Signed in successfully", jwtUtility.generateToken(user.get()));
+      String accessToken = jwtUtility.generateToken(user.get());
+      return new BaseResponse<>(2001, "Signed in successfully", accessToken);
 
     } catch (Exception exception) {
       exception.printStackTrace();
@@ -168,7 +179,7 @@ public class UserService implements UserServiceInterface {
       }
 
       return new BaseResponse<>(2001, "Signed up successfully", null);
-      
+
     } catch (Exception exception) {
       exception.printStackTrace();
       throw exception;

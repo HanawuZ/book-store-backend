@@ -9,15 +9,16 @@ import com.backend.app.shared.libraries.redis.RedisValueUtility;
 
 @Configuration
 public class RedisUtilities {
-    
-    private RedisTemplate<Object, Object> redisTemplate;
 
-    @Autowired
-    public RedisUtilities(RedisTemplate<Object, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
-    @Bean
-    public RedisValueUtility redisValueUtility() {
-        return new RedisValueUtility(redisTemplate);
-    }
+  private RedisTemplate<Object, Object> redisTemplate;
+
+  @Autowired
+  public RedisUtilities(RedisTemplate<Object, Object> redisTemplate) {
+    this.redisTemplate = redisTemplate;
+  }
+  
+  @Bean
+  public RedisValueUtility redisValueUtility() {
+    return new RedisValueUtility(redisTemplate);
+  }
 }

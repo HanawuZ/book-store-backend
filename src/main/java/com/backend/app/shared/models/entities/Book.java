@@ -25,7 +25,8 @@ import lombok.Data;
 @Entity
 @Table(name = "books", indexes = @Index(columnList = "isbn"))
 public class Book implements Serializable {
-     @Id
+    
+    @Id
     @Column(name = "id")
     private String id;
 

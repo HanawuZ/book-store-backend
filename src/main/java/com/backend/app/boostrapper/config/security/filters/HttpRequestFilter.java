@@ -23,10 +23,9 @@ public class HttpRequestFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(
-    HttpServletRequest request, 
-    HttpServletResponse response, 
-    FilterChain filterChain
-  ) throws ServletException, IOException {
+      HttpServletRequest request,
+      HttpServletResponse response,
+      FilterChain filterChain) throws ServletException, IOException {
     try {
 
       String method = request.getMethod();
@@ -35,18 +34,38 @@ public class HttpRequestFilter extends OncePerRequestFilter {
       System.out.println("1st Request filter, " + contentType);
       if (CONTENT_ALLOWED_STRINGS.contains(method)) {
 
-        // get content type
-        if (contentType == null || !contentType.equals("application/json")) {
-          response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-          response.setContentType("application/json");
+        // Get api request endpoint
+        String endpoint = request.getRequestURI();
+        System.out.println("Endpoint: " + endpoint);
 
-          BaseResponse<String> responseObj = new BaseResponse<>(4150, "Unsupported Media Type", null);
-          String jsonResponse = objectMapper.writeValueAsString(responseObj);
-          // Write JSON to response
-          response.getWriter().write(jsonResponse);
+        if (endpoint == "/api/v1/books/upload") {
+          if (contentType == null || !contentType.equals("multipart/form-data")) {
+            response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+            response.setContentType("application/json");
 
-          return;
+            BaseResponse<String> responseObj = new BaseResponse<>(4150, "Unsupported Media Type", null);
+            String jsonResponse = objectMapper.writeValueAsString(responseObj);
+            // Write JSON to response
+            response.getWriter().write(jsonResponse);
+
+            return;
+          }
+
         }
+
+        // get content type
+        // if (contentType == null || !contentType.equals("application/json")) {
+        // response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+        // response.setContentType("application/json");
+
+        // BaseResponse<String> responseObj = new BaseResponse<>(4150, "Unsupported
+        // Media Type", null);
+        // String jsonResponse = objectMapper.writeValueAsString(responseObj);
+        // // Write JSON to response
+        // response.getWriter().write(jsonResponse);
+
+        // return;
+        // }
       }
 
       filterChain.doFilter(request, response);

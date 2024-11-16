@@ -2,6 +2,12 @@
 
 ## Book API
 
+- [ ] Bulk Upload
+  Challenge: Implement bulk upload of books using CSV/Excel files. Validate the data before adding it to the database.
+
+  Enhancement: Use Apache POI or OpenCSV for parsing and Spring Batch for processing.
+
+
 - [ ] Get books paged 
 - [ ] Get book by id
 - [ ] Create book
