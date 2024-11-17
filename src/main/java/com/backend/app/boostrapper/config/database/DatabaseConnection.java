@@ -7,6 +7,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.zaxxer.hikari.HikariDataSource;
@@ -17,8 +18,8 @@ import com.zaxxer.hikari.HikariDataSource;
 public class DatabaseConnection {
 
     @Primary
-    @Bean(name = "db1DataSource")
-    public DataSource db1DataSource() {
+    @Bean(name = "dataSource")
+    public DataSource dataSource() {
         return DataSourceBuilder
             .create()
             .url("jdbc:mysql://localhost:3306/bookshop?useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true")
@@ -27,5 +28,10 @@ public class DatabaseConnection {
             .driverClassName("com.mysql.cj.jdbc.Driver")
             .type(HikariDataSource.class)
             .build();
+    }
+
+    @Bean
+    public DataSourceTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource());
     }
 }

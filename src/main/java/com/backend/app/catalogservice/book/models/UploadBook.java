@@ -14,10 +14,21 @@ public class UploadBook {
 
   private String genre;
 
-  private LocalDate publicationYear;
+  private String publicationYear;
 
   private Integer copiesAvailable;
 
   private Double price;
 
+  @Override
+  public String toString() {
+    return "UploadBook{" +
+        "isbn='" + isbn + '\'' +
+        ", title='" + title + '\'' +
+        ", genre='" + genre + '\'' +
+        ", publicationYear=" + publicationYear +
+        ", copiesAvailable=" + copiesAvailable +
+        ", price=" + price +
+        '}';
+  }
 }

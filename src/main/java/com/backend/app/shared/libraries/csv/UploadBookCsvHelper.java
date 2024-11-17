@@ -105,7 +105,7 @@ public class UploadBookCsvHelper extends AbstractCsvHelper {
         uploadBook.setIsbn(isbn);
         uploadBook.setTitle(hashMapUploadBook.get("title"));
         uploadBook.setGenre(hashMapUploadBook.get("genre"));
-        uploadBook.setPublicationYear(publicationYear);
+        uploadBook.setPublicationYear(hashMapUploadBook.get("publicationYear"));
         uploadBook.setCopiesAvailable(Integer.parseInt(hashMapUploadBook.get("copiesAvailable")));
         uploadBook.setPrice(Double.parseDouble(hashMapUploadBook.get("price")));
         uploadBooks.add(uploadBook);

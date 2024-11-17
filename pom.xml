@@ -134,6 +134,12 @@
 			<version>3.3.0</version>
 		</dependency>
 
+		<dependency>
+        <groupId>org.springframework.batch</groupId>
+        <artifactId>spring-batch-core</artifactId>
+        <version>5.1.2</version>
+    </dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.google.zxing/javase -->
 		<dependency>
 			<groupId>com.google.zxing</groupId>
