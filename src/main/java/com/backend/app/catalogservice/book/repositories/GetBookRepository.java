@@ -1,6 +1,7 @@
 package com.backend.app.catalogservice.book.repositories;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -18,8 +19,16 @@ public class GetBookRepository {
   @PersistenceContext
   private EntityManager entityManager;
 
-  public List<ListBook> getBooksPaged(DataPagination dataPagination, Integer isActive) {
+  public List<ListBook> getBooksPaged(
+    DataPagination dataPagination, 
+    Integer isActive, 
+    Integer minPrice, Integer maxPrice,
+    List<String> genres
+  ) {
     try {
+      Boolean hasFilters = false;
+      List<String> filters = new ArrayList<String>();
+
       String queryString = """
               SELECT
                 b.id,
@@ -34,25 +43,42 @@ public class GetBookRepository {
               LEFT JOIN publishers p ON b.publisher_id = p.id
           """;
 
-      if (!dataPagination.getSearch().isEmpty()) {
-        queryString += String.format(
-            """
-            WHERE (
-              b.title LIKE '%%%s%%'
-                OR b.isbn LIKE '%%%s%%'
-                OR b.genre LIKE '%%%s%%'
-                OR p.name LIKE '%%%s%%'
-            )
-            """, 
-            dataPagination.getSearch(), 
-            dataPagination.getSearch(), 
-            dataPagination.getSearch(),
-            dataPagination.getSearch()
-        );
+      if (genres != null && !genres.isEmpty()) {
+        hasFilters = true;
+
+        String genreInClause = String.format("b.genre IN ('%s')", String.join("','", genres));
+        filters.add(genreInClause);
+
       }
 
+      if (!dataPagination.getSearch().isEmpty()) {
+        hasFilters = true;
+        filters.add(String.format(
+          "(b.title LIKE '%%%s%%' OR b.isbn LIKE '%%%s%%' OR b.genre LIKE '%%%s%%' OR p.name LIKE '%%%s%%')", 
+          dataPagination.getSearch(), 
+          dataPagination.getSearch(), 
+          dataPagination.getSearch(),
+          dataPagination.getSearch()
+        ));
+      }
+        
       if (isActive != null) {
-        queryString += String.format(" AND b.is_active = %d", isActive);
+        hasFilters = true;
+        filters.add(String.format("b.is_active = %d", isActive));
+      }
+
+      if (minPrice != null) {
+        hasFilters = true;
+        filters.add(String.format("b.price >= %d", minPrice));
+      }
+
+      if (maxPrice != null) {
+        hasFilters = true;
+        filters.add(String.format("b.price <= %d", maxPrice));
+      }
+
+      if (hasFilters) {
+        queryString += " WHERE " + String.join(" AND ", filters);
       }
 
       // ORDER BY
@@ -61,6 +87,8 @@ public class GetBookRepository {
           dataPagination.getOrderName(),
           dataPagination.getLimit(),
           dataPagination.getOffset());
+      
+        System.out.println(queryString);
 
       Query selectQuery = entityManager.createNativeQuery(queryString);
       List<Object[]> resultList = selectQuery.getResultList();

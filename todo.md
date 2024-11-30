@@ -2,7 +2,7 @@
 
 ## Book API
 
-- [] Bulk Upload
+- [x] Bulk Upload
   Challenge: Implement bulk upload of books using CSV/Excel files. Validate the data before adding it to the database.
   - [x] Use Apache POI or OpenCSV for parsing.
   - [x] Spring Batch for processing.
@@ -25,19 +25,21 @@
   Enhancement: Allow users to switch languages dynamically and persist their preference.
 
 - [] Event-Driven Architecture
-Challenge: Use an event-driven architecture to handle operations like sending emails when orders are placed or inventory is low.
-Enhancement: Leverage tools like Kafka, RabbitMQ, or AWS SNS for event management.
+  Challenge: Use an event-driven architecture to handle operations like sending emails when orders are placed or inventory is low.
+  Enhancement: Leverage tools like Kafka, RabbitMQ, or AWS SNS for event management.
 
-- [ ] Advanced Search and Filtering
+- [?] Advanced Search and Filtering
       Challenge: Implement a search API that allows users to filter books by multiple criteria like title, author, genre, price range, publication year, and availability. Support complex queries, such as searching for books by multiple authors or genres.
-  - [ ] Use normal pagination.
+  - [x] Use normal pagination including 'Page', 'Page size', 'Order by' & 'Order name'.
+  - [x] Can 'Search' by title, isbn, genre & publisher's name
+  - [x] Add more complex filter including price range, multiple genres and availability.
   - [ ] Use Elasticsearch or RediSearch for partial matches and typos.
 
 - [] Integration with External APIs
   Challenge: Fetch book metadata from external APIs like Google Books or OpenLibrary to auto-populate fields.
   Enhancement: Implement caching using Redis for frequently accessed data.
 
-- [ ] Get books paged 
+- [x] Get books paged 
 - [ ] Get book by id
 - [ ] Create book
 - [ ] Update book

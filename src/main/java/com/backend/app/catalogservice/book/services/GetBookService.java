@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.app.catalogservice.book.models.ListBook;
-import com.backend.app.catalogservice.book.repositories.BookRepository;
 import com.backend.app.catalogservice.book.repositories.GetBookRepository;
 import com.backend.app.shared.libraries.http.BaseResponse;
 import com.backend.app.shared.models.pagination.DataPagination;
@@ -21,10 +20,21 @@ public class GetBookService {
     this.getBookRepository = bookRepository;
   }
 
-  public BaseResponse<?> getBooksPaged(DataPagination dataPagination, Integer isActive) {
+  public BaseResponse<?> getBooksPaged(
+    DataPagination dataPagination, 
+    Integer isActive, 
+    Integer minPrice, Integer maxPrice,
+    List<String> genres
+  ) {
     try {
+      if (minPrice != null && maxPrice != null) {
+        if (minPrice > maxPrice) {
+          return new BaseResponse<>(4000, "Max price must be greater than min price", null);
+        }
+      }
 
-      List<ListBook> results = getBookRepository.getBooksPaged(dataPagination, isActive);
+
+      List<ListBook> results = getBookRepository.getBooksPaged(dataPagination, isActive, minPrice, maxPrice, genres);
       if (results.isEmpty()) {
         return new BaseResponse<>(4000, "No books found", results);
       }

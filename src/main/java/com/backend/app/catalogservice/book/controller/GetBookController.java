@@ -1,5 +1,7 @@
 package com.backend.app.catalogservice.book.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.method.P;
@@ -36,16 +38,19 @@ public class GetBookController {
     @RequestParam(name = "orderBy", required = false) String orderBy,
     @RequestParam(name = "orderName", required = false) String orderName,
     @RequestParam(name = "search", required = false) String search,
-    @RequestParam(name = "isActive", required = false) Integer isActive
+    @RequestParam(name = "isActive", required = false) Integer isActive,
+    @RequestParam(name = "minPrice", required = false) Integer minPrice,
+    @RequestParam(name = "maxPrice", required = false) Integer maxPrice,
+    @RequestParam(name = "genres", required = false) List<String> genres
   ) {
     try {
       if (isActive != null && isActive != 0 && isActive != 1) {
         BaseResponse<String> errorResponse = new BaseResponse<String>(4000, "isActive must be 0 or 1", null);
         return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(errorResponse);
       }
-      
+
       DataPagination dataPagination = new DataPagination(page, limit, orderBy, orderName, search);
-      BaseResponse<?> response = getBookService.getBooksPaged(dataPagination, isActive);
+      BaseResponse<?> response = getBookService.getBooksPaged(dataPagination, isActive, minPrice, maxPrice, genres);
 
       if (response.getCode() != 2000) {
         return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST).body(response);
