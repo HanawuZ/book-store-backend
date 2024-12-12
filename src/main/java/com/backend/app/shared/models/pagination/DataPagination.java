@@ -9,13 +9,13 @@ public class DataPagination {
   String search;
   Integer offset;
 
-  public DataPagination(Integer page, Integer limit, String orderBy, String orderName, String search, Integer offset) {
-    this.page = page;
-    this.limit = limit;
-    this.orderBy = orderBy;
-    this.orderName = orderName;
-    this.search = search;
-    this.offset = offset;
+  public DataPagination(Integer page, Integer limit, String orderBy, String orderName, String search) {
+    this.page = (page != null) ? page : 1;
+    this.limit = (limit != null) ? limit : 10;
+    this.orderBy = (orderBy != null) ? orderBy : "created_date";
+    this.orderName = (orderName != null) ? orderName : "DESC";
+    this.search = (search != null) ? search : "";
+    this.offset = (this.page - 1) * this.limit;
   }
 
   public Integer getPage() {
@@ -57,13 +57,13 @@ public class DataPagination {
   public void setSearch(String search) {
     this.search = search;
   } 
-
+  
   public Integer getOffset() {
     return offset;
-  } 
+  }
 
   public void setOffset(Integer offset) {
     this.offset = offset;
-  } 
+  }
 
 }

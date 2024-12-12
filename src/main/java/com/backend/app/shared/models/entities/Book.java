@@ -25,7 +25,8 @@ import lombok.Data;
 @Entity
 @Table(name = "books", indexes = @Index(columnList = "isbn"))
 public class Book implements Serializable {
-     @Id
+    
+    @Id
     @Column(name = "id")
     private String id;
 
@@ -79,4 +80,25 @@ public class Book implements Serializable {
     @JsonProperty("updatedBy")
     @Column(name = "updated_by")
     private String updatedBy;
+
+    
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", genre='" + genre + '\'' +
+                ", publicationYear=" + publicationYear +
+                ", copiesAvailable=" + copiesAvailable +
+                ", price=" + price +
+                ", authors=" + authors +
+                ", publisher=" + publisher +
+                ", isActive=" + isActive +
+                ", createdDate=" + createdDate +
+                ", createdBy='" + createdBy + '\'' +
+                ", updatedDate=" + updatedDate +
+                ", updatedBy='" + updatedBy + '\'' +
+                '}';
+    }
 }

@@ -17,41 +17,38 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @Configuration
 public class AppSecurityConfig {
 
-    private HttpRequestFilter httpRequestFilter;
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+  private HttpRequestFilter httpRequestFilter;
 
-    @Autowired
-    public AppSecurityConfig(
-            HttpRequestFilter httpRequestFilter,
-            JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.httpRequestFilter = httpRequestFilter;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
+  @Autowired
+  public AppSecurityConfig(HttpRequestFilter httpRequestFilter) {
+    this.httpRequestFilter = httpRequestFilter;
+    // this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+  }
 
-    /**
-     * Security filter chain configuration for all incoming requests.
-     *
-     */
-    @Bean
-    public SecurityFilterChain securityFilter(HttpSecurity http) throws Exception {
-        HttpSecurity disableFilters = disableFilters(http);
-        HttpSecurity configureRoutes = configureRoutes(disableFilters);
-        configureRoutes
-                .addFilterAfter(httpRequestFilter, CsrfFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, AuthorizationFilter.class)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        return disableFilters.build();
-    }
+  /**
+   * Security filter chain configuration for all incoming requests.
+   *
+   */
+  @Bean
+  public SecurityFilterChain securityFilter(HttpSecurity http) throws Exception {
+    HttpSecurity disableFilters = disableFilters(http);
+    HttpSecurity configureRoutes = configureRoutes(disableFilters);
+    configureRoutes
+        .addFilterAfter(httpRequestFilter, CsrfFilter.class)
+        // .addFilterBefore(jwtAuthenticationFilter, AuthorizationFilter.class)
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    return disableFilters.build();
+  }
 
-    private HttpSecurity disableFilters(HttpSecurity http) throws Exception {
-        return http
-                .csrf(csrf -> csrf.disable())
-                .logout(logout -> logout.disable());
-    }
+  private HttpSecurity disableFilters(HttpSecurity http) throws Exception {
+    return http
+        .csrf(csrf -> csrf.disable())
+        .logout(logout -> logout.disable());
+  }
 
-    private HttpSecurity configureRoutes(HttpSecurity http) throws Exception {
-        return http
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/authorized").authenticated())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
-    }
+  private HttpSecurity configureRoutes(HttpSecurity http) throws Exception {
+    return http
+        .authorizeHttpRequests(auth -> auth.requestMatchers("/authorized").authenticated())
+        .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+  }
 }

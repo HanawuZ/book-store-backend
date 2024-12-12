@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
-import com.backend.app.userservice.services.UserService;
+import com.backend.app.userservice.user.services.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -17,19 +17,19 @@ import com.backend.app.shared.libraries.security.authenticator.GoogleAuthenticat
 @Configuration
 public class AuthenticationConfig {
 
-    @Bean
-    public ClientRegistrationRepository clientRegistrationRepository() {
-        return new InMemoryClientRegistrationRepository(OAuthConfig.googleClientRegistration());
-    }
+  @Bean
+  public ClientRegistrationRepository clientRegistrationRepository() {
+    return new InMemoryClientRegistrationRepository(OAuthConfig.googleClientRegistration());
+  }
 
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder encoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public GoogleAuthenticatorService googleAuthenticatorService() {
-        return new GoogleAuthenticatorService();
-    }
+  @Bean
+  public GoogleAuthenticatorService googleAuthenticatorService() {
+    return new GoogleAuthenticatorService();
+  }
 
 }

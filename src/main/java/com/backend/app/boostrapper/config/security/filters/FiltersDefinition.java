@@ -4,24 +4,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.backend.app.userservice.services.UserService;
+// import com.backend.app.userservice.services.UserService;
 
 @Configuration
 public class FiltersDefinition {
-    
-    private UserService userService;
 
-    @Autowired
-    public FiltersDefinition(UserService userService) {
-        this.userService = userService;
-    }
+  // private UserService userService;
 
-    @Bean
-    public HttpRequestFilter httpRequestFilter() {
-        return new HttpRequestFilter();
-    }
+  // @Autowired
+  // public FiltersDefinition(UserService userService) {
+  // this.userService = userService;
+  // }
 
-    @Bean JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(userService);
-    }
+  @Bean
+  public HttpRequestFilter httpRequestFilter() {
+    return new HttpRequestFilter();
+  }
+
+  // @Bean JwtAuthenticationFilter jwtAuthenticationFilter() {
+  // return new JwtAuthenticationFilter(userService);
+  // }
 }
