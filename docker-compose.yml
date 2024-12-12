@@ -1,0 +1,38 @@
+services:
+  order_svc_db:
+    container_name: order_svc_db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: G5!kT@2y9B#zU8%w
+      MYSQL_DATABASE: bookshop-order
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+  catalog_svc_db:
+    container_name: catalog_svc_db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: bookshop-catalog
+      POSTGRES_USER: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost", "-p", "5432", "-d", "bookshop-catalog"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+volumes:
+  pgdata:
+    driver: local
