@@ -1,4 +1,4 @@
-package com.example.catalog_svc.book.repositories;
+package com.example.catalog_svc.app.book.repositories;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.example.catalog_svc.book.models.ListBook;
+import com.example.catalog_svc.app.book.models.ListBook;
 import com.example.catalog_svc.models.pagination.DataPagination;
 
 import jakarta.persistence.EntityManager;

@@ -1,11 +1,11 @@
-package com.example.catalog_svc.book.services;
+package com.example.catalog_svc.app.book.services;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.catalog_svc.book.models.ListBook;
-import com.example.catalog_svc.book.repositories.GetBookRepository;
+import com.example.catalog_svc.app.book.models.ListBook;
+import com.example.catalog_svc.app.book.repositories.GetBookRepository;
 import com.example.catalog_svc.models.pagination.DataPagination;
 import com.example.catalog_svc.models.response.BaseResponse;
 

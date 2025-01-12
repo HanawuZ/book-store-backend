@@ -1,7 +1,6 @@
 package com.example.catalog_svc.models.entities;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;

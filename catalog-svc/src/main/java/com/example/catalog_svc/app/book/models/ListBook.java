@@ -1,4 +1,4 @@
-package com.example.catalog_svc.book.models;
+package com.example.catalog_svc.app.book.models;
 
 import java.sql.Date;
 

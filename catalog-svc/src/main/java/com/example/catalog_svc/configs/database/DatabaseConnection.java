@@ -20,9 +20,9 @@ public class DatabaseConnection {
   DataSource dataSource() {
     HikariDataSource dataSource = DataSourceBuilder
         .create()
-        .url("jdbc:postgresql://localhost:5432/bookshop-catalog")
-        .username("postgres")
-        .password("example")
+        .url("jdbc:postgresql://localhost:5433/bookshop-catalog")
+        .username("user1")
+        .password("example1")
         .driverClassName("org.postgresql.Driver")
         .type(HikariDataSource.class)
         .build();

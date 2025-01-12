@@ -1,4 +1,4 @@
-package com.example.catalog_svc.book.controllers;
+package com.example.catalog_svc.app.book.controllers;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.catalog_svc.book.services.GetBookService;
+import com.example.catalog_svc.app.book.services.GetBookService;
 import com.example.catalog_svc.libraries.error.ErrorMessage;
 import com.example.catalog_svc.models.pagination.DataPagination;
 import com.example.catalog_svc.models.response.BaseResponse;

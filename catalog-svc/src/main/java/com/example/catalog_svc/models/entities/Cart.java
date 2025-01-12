@@ -22,6 +22,9 @@ public class Cart implements Serializable {
   @JoinColumn(name = "book_id", referencedColumnName = "id")
   private Book book;
 
+  @Column(name = "book_id", insertable=false, updatable=false)
+  private String bookId;
+
   @Column(name = "customer_id")
   private String customerId;
 
