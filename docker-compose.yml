@@ -13,21 +13,39 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  
+  user_svc_db:
+    container_name: user_svc_db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example2
+      POSTGRES_DB: bookshop-user
+      POSTGRES_USER: user2
+    volumes:
+      - pgdata2:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user2", "-h", "localhost", "-p", "5432", "-d", "bookshop-user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
       
   catalog_svc_db:
     container_name: catalog_svc_db
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: example
+      POSTGRES_PASSWORD: example1
       POSTGRES_DB: bookshop-catalog
-      POSTGRES_USER: postgres
+      POSTGRES_USER: user1
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost", "-p", "5432", "-d", "bookshop-catalog"]
+      test: ["CMD", "pg_isready", "-U", "user1", "-h", "localhost", "-p", "5432", "-d", "bookshop-catalog"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -35,4 +53,7 @@ services:
 
 volumes:
   pgdata:
+    driver: local
+  
+  pgdata2:
     driver: local
