@@ -5,7 +5,36 @@
     "version": "1.0"
   },
   "paths": {
-    "/WeatherForecast": {
+    "/api/health/check": {
+      "get": {
+        "tags": [
+          "HealthCheck"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/weather-forecast": {
       "get": {
         "tags": [
           "WeatherForecast"
