@@ -1,12 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using UserService.Configs.Databases;
-using UserService.Models.Entities.Seeds;
+using System.Text.Json;
+using UserService.Apps.Users.Services;
+using UserService.Apps.Users.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().
+    AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -14,6 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddLogging();
+
 
 builder.Services.AddDbContext<PostgresDatabaseContext>(options =>
     options
@@ -31,6 +38,9 @@ builder.Services.AddCors(options =>
        });
 });
 
+builder.Services.AddScoped<IUserService, ConcretedUserService>();
+builder.Services.AddScoped<IUserRepository, ConcretedUserRepository>();
+
 var app = builder.Build();
 
 // Test database connection during startup
@@ -42,7 +52,7 @@ using (var scope = app.Services.CreateScope())
     {
         // Attempt to connect to the database
         dbContext.Database.OpenConnection();
-        UserSeeder.Seed(dbContext);
+        //UserSeeder.Seed(dbContext);
         Console.WriteLine("Database connection successful and data seeded!");
     }
     catch (Exception ex)

@@ -1,38 +1,47 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace UserService.Models.Entities
 {
     [Table("users")]
     public class User
     {
-        public User(
-            string id, 
-            string username, 
-            string password, 
-            bool isActive, 
-            DateTime createdDate,
-            string createdBy,
-            DateTime updatedDate,
-            string updatedBy
-            ) { 
-            this.Id = id;
-            this.Username = username;
-            this.Password = password;
-            this.IsActive = isActive;
-            this.CreatedDate = createdDate;
-            this.CreatedBy = createdBy;
-            this.UpdatedDate = updatedDate;
-            this.UpdatedBy = updatedBy;
-        }
-
-
+        [Key]
+        [Column("id")]
         public string Id { get; set; }
         public string Username { get; set; }
 
         public string Password { get; set; }
 
+        [Column("profile_picture")]
+        public string? ProfilePicture { get; set; }
+
+
+        [Column("email")]
+        public string Email { get; set; }
+
+        [Column("account_non_expired")]
+        public bool AccountNonExpired { get; set; }
+
+        [Column("account_non_locked")]
+        public bool AccountNonLocked { get; set; }
+
+        [Column("credentials_non_expired")]
+        public bool CredentialsNonExpired { get; set; }
+
+        [Column("is_using_2fa")]
+        public bool IsUsing2FA { get; set; }
+
+        [Column("secret")]
+        public string? Secret { get; set; }
+
+        [Column("provider_id")]
+        public string? ProviderId { get; set; }
+
+        [Column("provider")]
+        public string? Provider { get; set; }
+
+        [Column("is_active")]
         public bool IsActive { get; set; }
 
         public DateTime CreatedDate { get; set; }
