@@ -1,4 +1,5 @@
-﻿using UserService.Apps.Users.Models.Requests;
+﻿using UserService.Apps.Users.Models.Queries;
+using UserService.Apps.Users.Models.Requests;
 using UserService.Apps.Users.Repository;
 using UserService.Libs.Bcrypt;
 using UserService.Libs.Http;
@@ -9,8 +10,9 @@ namespace UserService.Apps.Users.Services
     public interface IUserService
     {
         public HttpServe<string> SignUp(SignUpRequest request);
+        public HttpServe<string?> SignIn(SignInRequest request);
     }
-    public class ConcretedUserService: IUserService
+    public class ConcretedUserService : IUserService
     {
 
         private readonly IUserRepository _userRepository;
@@ -39,7 +41,7 @@ namespace UserService.Apps.Users.Services
                     CredentialsNonExpired = false,
                     IsUsing2FA = false,
                     Secret = null,
-                    Provider= null,
+                    Provider = null,
                     ProviderId = null,
                     IsActive = true,
                     CreatedDate = currentTime,
@@ -71,7 +73,7 @@ namespace UserService.Apps.Users.Services
                 Console.WriteLine("UserService");
 
                 bool complete = _userRepository.CreateUser(newUser, newCustomer, userMapping);
-                
+
                 if (complete)
                 {
                     return new HttpServe<string>(StatusCodes.Status201Created, "สมัครสมาชิกสำเร็จ!", null);
@@ -85,6 +87,44 @@ namespace UserService.Apps.Users.Services
             {
                 throw new Exception(ex.Message);
 
+            }
+
+        }
+
+        public HttpServe<string?> SignIn(SignInRequest request)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(request.UsernameOrEmail))
+                {
+                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, "คุณไม่ได้กรอกชื่อผู้ใช้หรืออีเมล", null);
+
+                }
+
+                if (String.IsNullOrEmpty(request.Password))
+                {
+                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, "กรุณากรอกรหัสผ่าน", null);
+                }
+
+
+                GetUserQuery? existedUser = _userRepository.GetUserByUsernameOrEmail(request.UsernameOrEmail);
+                Console.WriteLine($"{existedUser.Username}, {existedUser.Password}");
+                if (existedUser == null)
+                {
+                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, "ไม่พบข้อมูลผู้ใช้", null);
+                }
+
+                bool passwordCorrect = BcryptEncoder.ComparePassword(request.Password, existedUser.Password);
+                if (!passwordCorrect)
+                {
+                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, "รหัสผ่านไม่ถูกต้อง", null);
+                }
+
+                return new HttpServe<string?>(StatusCodes.Status201Created, "เข้าสู่ระบบสำเร็จ!", null);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
 
         }

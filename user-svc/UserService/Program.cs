@@ -3,6 +3,9 @@ using UserService.Configs.Databases;
 using System.Text.Json;
 using UserService.Apps.Users.Services;
 using UserService.Apps.Users.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,9 +43,22 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IUserService, ConcretedUserService>();
 builder.Services.AddScoped<IUserRepository, ConcretedUserRepository>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "example.com",
+            ValidAudience = "example.com",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437"))
+        };
+    });
 
 var app = builder.Build();
-
 // Test database connection during startup
 using (var scope = app.Services.CreateScope())
 {
@@ -72,10 +88,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseHttpsRedirection();
 
 app.UseCors("MyAllowSpecificOrigins");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

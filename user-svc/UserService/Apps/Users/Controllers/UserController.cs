@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Apps.Users.Models.Requests;
@@ -19,6 +20,7 @@ namespace UserService.Apps.Users.Controllers
 
         [HttpPost]
         [Route("sign-up")]
+        [AllowAnonymous]
         public IActionResult SignUp([FromBody] SignUpRequest request)
         {
             try
@@ -41,12 +43,24 @@ namespace UserService.Apps.Users.Controllers
 
         [HttpPost]
         [Route("sign-in")]
+        [AllowAnonymous]
         public IActionResult SignIn([FromBody] SignInRequest request)
         {
-            Console.WriteLine($"Data => {request.Email}, {request.Username}, {request.Password}, {request.RememberMe}");
-            HttpServe<string?> response = new HttpServe<string?>(201, "Sign in", null);
-            return Created(string.Empty, response);
+            try
+            {
+                HttpServe<string?> response = _userService.SignIn(request);
+                if (response.Status != StatusCodes.Status201Created)
+                {
+                    return BadRequest(response);
+                }
 
+                return Created(String.Empty, response);
+
+            }
+            catch (Exception ex) {
+                HttpServe<string?> errResponse = new HttpServe<string?>(StatusCodes.Status500InternalServerError, ex.Message, null);
+                return StatusCode(StatusCodes.Status500InternalServerError, errResponse);
+            }
         }
     }
 }

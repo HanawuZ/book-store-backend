@@ -5,10 +5,10 @@ namespace UserService.Apps.Users.Models.Requests
 {
     public class SignInRequest
     {
-        public string? Email { get; set; }
+        [JsonPropertyName("usernameOrEmail")]
+        public string UsernameOrEmail { get; set; }
 
-        public string? Username { get; set; }
-
+        [JsonPropertyName("password")]
         public required string Password { get; set; }
 
         [JsonPropertyName("rememberMe")]

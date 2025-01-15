@@ -1,4 +1,6 @@
-﻿using UserService.Configs.Databases;
+﻿using Microsoft.EntityFrameworkCore;
+using UserService.Apps.Users.Models.Queries;
+using UserService.Configs.Databases;
 using UserService.Models.Entities;
 
 namespace UserService.Apps.Users.Repository
@@ -7,7 +9,7 @@ namespace UserService.Apps.Users.Repository
     public interface IUserRepository
     {
         public bool CreateUser(User newUser, Customer newCustomer, UserMapping userMapping);
-        public void GetUserByUsernameOrEmail(string username, string email);
+        public GetUserQuery? GetUserByUsernameOrEmail(string usernameOrEmail);
     }
 
     public class ConcretedUserRepository: IUserRepository
@@ -41,9 +43,19 @@ namespace UserService.Apps.Users.Repository
             }
         }
 
-        public void GetUserByUsernameOrEmail(string username, string email)
+        public GetUserQuery? GetUserByUsernameOrEmail(string usernameOrEmail)
         {
+            try
+            {
 
+                GetUserQuery? result = _dbContext.Database.
+                    SqlQuery<GetUserQuery>($"SELECT u.username, u.email, u.password FROM users u WHERE u.username = {usernameOrEmail} OR u.email = {usernameOrEmail}").
+                    First();
+                return result;
+            }
+            catch (Exception ex) {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
