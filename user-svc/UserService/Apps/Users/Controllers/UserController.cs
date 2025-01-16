@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Apps.Users.Models.Requests;
+using UserService.Apps.Users.Models.Responses;
 using UserService.Apps.Users.Services;
 using UserService.Libs.Http;
 
@@ -48,7 +49,7 @@ namespace UserService.Apps.Users.Controllers
         {
             try
             {
-                HttpServe<string?> response = _userService.SignIn(request);
+                HttpServe<SignInResponse?> response = _userService.SignIn(request);
                 if (response.Status != StatusCodes.Status201Created)
                 {
                     return BadRequest(response);

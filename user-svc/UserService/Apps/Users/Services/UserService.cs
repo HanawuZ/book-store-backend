@@ -1,8 +1,11 @@
-﻿using UserService.Apps.Users.Models.Queries;
+﻿using System.IdentityModel.Tokens.Jwt;
+using UserService.Apps.Users.Models.Queries;
 using UserService.Apps.Users.Models.Requests;
+using UserService.Apps.Users.Models.Responses;
 using UserService.Apps.Users.Repository;
 using UserService.Libs.Bcrypt;
 using UserService.Libs.Http;
+using UserService.Libs.Security;
 using UserService.Models.Entities;
 
 namespace UserService.Apps.Users.Services
@@ -10,16 +13,20 @@ namespace UserService.Apps.Users.Services
     public interface IUserService
     {
         public HttpServe<string> SignUp(SignUpRequest request);
-        public HttpServe<string?> SignIn(SignInRequest request);
+        public HttpServe<SignInResponse?> SignIn(SignInRequest request);
     }
     public class ConcretedUserService : IUserService
     {
 
         private readonly IUserRepository _userRepository;
 
-        public ConcretedUserService(IUserRepository userRepository)
+        private readonly IJwtUtility _jwtUtility;
+
+        public ConcretedUserService(IUserRepository userRepository, IJwtUtility jwtUtility)
         {
             _userRepository = userRepository;
+            _jwtUtility = jwtUtility;
+
         }
 
         public HttpServe<string> SignUp(SignUpRequest request)
@@ -91,19 +98,19 @@ namespace UserService.Apps.Users.Services
 
         }
 
-        public HttpServe<string?> SignIn(SignInRequest request)
+        public HttpServe<SignInResponse?> SignIn(SignInRequest request)
         {
             try
             {
                 if (String.IsNullOrEmpty(request.UsernameOrEmail))
                 {
-                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, "คุณไม่ได้กรอกชื่อผู้ใช้หรืออีเมล", null);
+                    return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "คุณไม่ได้กรอกชื่อผู้ใช้หรืออีเมล", null);
 
                 }
 
                 if (String.IsNullOrEmpty(request.Password))
                 {
-                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, "กรุณากรอกรหัสผ่าน", null);
+                    return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "กรุณากรอกรหัสผ่าน", null);
                 }
 
 
@@ -111,16 +118,19 @@ namespace UserService.Apps.Users.Services
                 Console.WriteLine($"{existedUser.Username}, {existedUser.Password}");
                 if (existedUser == null)
                 {
-                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, "ไม่พบข้อมูลผู้ใช้", null);
+                    return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "ไม่พบข้อมูลผู้ใช้", null);
                 }
 
                 bool passwordCorrect = BcryptEncoder.ComparePassword(request.Password, existedUser.Password);
                 if (!passwordCorrect)
                 {
-                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, "รหัสผ่านไม่ถูกต้อง", null);
+                    return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "รหัสผ่านไม่ถูกต้อง", null);
                 }
 
-                return new HttpServe<string?>(StatusCodes.Status201Created, "เข้าสู่ระบบสำเร็จ!", null);
+                string token = _jwtUtility.GenerateUserToken(existedUser);
+                SignInResponse response = new SignInResponse { AccessToken = token };
+
+                return new HttpServe<SignInResponse?>(StatusCodes.Status201Created, "เข้าสู่ระบบสำเร็จ!", response);
             }
             catch (Exception ex)
             {
