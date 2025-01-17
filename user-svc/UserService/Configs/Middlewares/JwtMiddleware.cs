@@ -1,37 +1,53 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.Net.Http.Headers;
-using System.Text;
+﻿using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using UserService.Libs.Http;
 using System.Text.Json;
 
-namespace UserService.Configs.Middlewares
-{
-    public class JwtMiddleware: IMiddleware
+namespace UserService.Configs.Middlewares { 
+    
+    public class JwtBearerMiddleware
     {
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        public static void ConfigureJwtBearerOptions(JwtBearerOptions options)
         {
-            var token = context.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
-            Console.WriteLine("Invoke JWT Middleware");
-            Console.WriteLine($"{token}");
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437")),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
 
-            if (String.IsNullOrEmpty(token)) {
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            options.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = HandleAuthenticationFailed,
+                OnChallenge = HandleChallenge
+            };
+        }
 
-                HttpServe<string?> errResponse = new HttpServe<string?>(StatusCodes.Status401Unauthorized, "No access token", null);
+        private static Task HandleAuthenticationFailed(AuthenticationFailedContext context)
+        {
+            context.NoResult();
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "application/json";
 
-                string serializedResponse = JsonSerializer.Serialize(errResponse);
-                await context.Response.WriteAsync(serializedResponse);
-                await context.Response.CompleteAsync();
-                return;
-            }
+            string errorMessage = $"Internal server error: {context.Exception.ToString()}";
 
+            HttpServe<string?> errResponse = new HttpServe<string?>(StatusCodes.Status500InternalServerError, errorMessage, null);
 
-            // Call the next middleware in the pipeline
-            await next.Invoke(context);
+            return context.Response.WriteAsync(JsonSerializer.Serialize(errResponse));
+        }
+
+        private static Task HandleChallenge(JwtBearerChallengeContext context)
+        {
+            context.HandleResponse();
+            context.Response.StatusCode = 401;
+            context.Response.ContentType = "application/json";
+            string errorMessage = $"Unauthorized: {context.Error}";
+            HttpServe<string?> errResponse = new HttpServe<string?>(StatusCodes.Status401Unauthorized, errorMessage, null);
+
+            return context.Response.WriteAsync(JsonSerializer.Serialize(errResponse));
         }
 
     }
+
 }

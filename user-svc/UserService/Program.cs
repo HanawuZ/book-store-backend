@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UserService.Libs.Security;
 using UserService.Configs.Middlewares;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,44 +47,15 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IUserService, ConcretedUserService>();
 builder.Services.AddScoped<IUserRepository, ConcretedUserRepository>();
 builder.Services.AddScoped<IJwtUtility, JwtUtility>();
-builder.Services.AddScoped<JwtMiddleware>();
 builder.Services
     .AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-    .AddJwtBearer(x =>
-         {
-             x.TokenValidationParameters = new TokenValidationParameters
-             {
-                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437")),
-                 ValidateIssuer = false,
-                 ValidateAudience = false
-             };
-             x.Events = new JwtBearerEvents
-             {
-                   OnAuthenticationFailed = c =>
-                   {
-                       c.NoResult();
-                       c.Response.StatusCode = 500;
-                       c.Response.ContentType = "text/plain";
-
-                       return c.Response.WriteAsync(c.Exception.ToString());
-                   },
-                 OnChallenge = context => {
-
-                     context.HandleResponse();
-                     context.Response.StatusCode = 401;
-                     context.Response.ContentType = "application/json";
-
-                     return context.Response.WriteAsync("Unauthorized");
-                 },
-             };
-        }
-    );
-
-     var app = builder.Build();
+    .AddJwtBearer(JwtBearerMiddleware.ConfigureJwtBearerOptions);
+    
+var app = builder.Build();
 // Test database connection during startup
 using (var scope = app.Services.CreateScope())
 {
@@ -118,7 +90,6 @@ app.UseHttpsRedirection();
 app.UseCors("MyAllowSpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
 
