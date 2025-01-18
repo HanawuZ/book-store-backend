@@ -35,10 +35,8 @@ func (d *GormDatabase) Migrate() {
 	}
 
 	err := d.Database.AutoMigrate(
-		&entities.Customer{},
 		&entities.SaleOrder{},
 		&entities.SaleItem{},
-		&entities.CustomerAddress{},
 	)
 
 	if err != nil {

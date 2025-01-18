@@ -7,6 +7,7 @@ import (
 // SaleItem represents the sale_items table.
 type SaleItem struct {
 	ID              string    `gorm:"column:id;type:varchar(36);primaryKey"`
+	SaleOrder       SaleOrder `gorm:"foreignKey:SaleOrderID"`
 	SaleOrderID     string    `gorm:"column:order_id;type:text;not null"` // Foreign key to SaleOrder
 	ProductID       string    `gorm:"column:product_id;type:text;not null"`
 	Price           float64   `gorm:"column:price;not null"`
