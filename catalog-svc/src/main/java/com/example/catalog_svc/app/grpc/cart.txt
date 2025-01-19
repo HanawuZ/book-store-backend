@@ -1,0 +1,47 @@
+package com.example.catalog_svc.app.grpc.cart;
+
+import java.util.List;
+
+import com.example.catalog_svc.app.cart.services.GetCartService;
+import com.example.catalog_svc.app.grpc.cart.GrpcCartServiceGrpc.GrpcCartServiceImplBase;
+import com.example.catalog_svc.models.response.BaseResponse;
+
+import net.devh.boot.grpc.server.service.GrpcService;
+import io.grpc.stub.StreamObserver;
+@GrpcService
+public class GrpcCartServiceImpl extends GrpcCartServiceImplBase{
+  
+  private GetCartService cartService;
+
+  public GrpcCartServiceImpl(GetCartService cartService) {
+    this.cartService = cartService;
+  }
+
+  @Override
+  public void getCartItemByCustomer(CartItemRequest request, StreamObserver<CartItemResponse> responseObserver) {
+    System.out.println("getCartItemByCustomer");
+    String customerId = request.getCustomerId();
+    if (customerId.isEmpty()) {
+      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT.asRuntimeException());
+      return;
+    }
+
+    System.out.println("REQUEST: "+ customerId);
+    BaseResponse<List<com.example.catalog_svc.app.cart.models.query.CartItem>> response = cartService.getCartItemByCustomer(customerId);
+    if (response.getCode() != 2000) {
+      responseObserver.onError(io.grpc.Status.INTERNAL.asRuntimeException());
+      return;
+    }
+
+    CartItemResponse.Builder builder = CartItemResponse.newBuilder();
+
+    for (Integer i = 0; i < response.getData().size(); i++) {
+      com.example.catalog_svc.app.cart.models.query.CartItem item = response.getData().get(i);
+
+      System.out.println(item.getBookId() + " " + item.getQuantity() + " " + item.getTitle());
+    }
+
+    responseObserver.onNext(null);
+    responseObserver.onCompleted();
+  }
+}

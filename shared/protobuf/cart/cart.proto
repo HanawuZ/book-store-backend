@@ -1,0 +1,33 @@
+syntax="proto3";
+
+option go_package = "./cart";
+
+option java_multiple_files = true;
+option java_package = "com.example.catalog_svc.app.grpc.cart";
+option java_outer_classname = "CartProto";
+
+package cart;
+
+service GrpcCartService {
+  rpc GetCartItemByCustomerProto(CartItemRequestProto) returns (CartItemResponseProto);
+}
+
+message CartItemRequestProto {
+  string customerId = 1;
+}
+
+
+message CartItemProto {
+  string bookId = 1;            // Corresponds to "bookId"
+  int32 quantity = 2;            // Corresponds to "quantity"
+  int32 copiesAvailable = 3;    // Corresponds to "copiesAvailable"
+  string genre = 4;              // Corresponds to "genre"
+  string isbn = 5;               // Corresponds to "isbn"
+  double price = 6;              // Corresponds to "price"
+  string publicationYear = 7;    // Corresponds to "publicationYear"
+  string title = 8;              // Corresponds to "title"
+}
+
+message CartItemResponseProto {
+  repeated CartItemProto items = 1; // A list of CartItem
+}
