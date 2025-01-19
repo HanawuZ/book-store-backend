@@ -9,7 +9,7 @@ namespace UserService.Apps.Users.Repository
     public interface IUserRepository
     {
         public bool CreateUser(User newUser, Customer newCustomer, UserMapping userMapping);
-        public GetUserQuery? GetUserByUsernameOrEmail(string usernameOrEmail);
+        public GetUserCustomerQuery? GetUserByUsernameOrEmail(string usernameOrEmail);
     }
 
     public class ConcretedUserRepository: IUserRepository
@@ -43,13 +43,20 @@ namespace UserService.Apps.Users.Repository
             }
         }
 
-        public GetUserQuery? GetUserByUsernameOrEmail(string usernameOrEmail)
+        public GetUserCustomerQuery? GetUserByUsernameOrEmail(string usernameOrEmail)
         {
             try
             {
+                FormattableString queryString = $"""
+                    SELECT u.username, u.email, u.password, c.id AS customer_id
+                    FROM users u 
+                    JOIN user_mappings um ON u.id = um.user_id
+                    JOIN customers c ON um.customer_id = c.id
+                    WHERE u.username = {usernameOrEmail} OR u.email = {usernameOrEmail}
+                """;
 
-                GetUserQuery? result = _dbContext.Database.
-                    SqlQuery<GetUserQuery>($"SELECT u.username, u.email, u.password FROM users u WHERE u.username = {usernameOrEmail} OR u.email = {usernameOrEmail}").
+                GetUserCustomerQuery? result = _dbContext.Database.
+                    SqlQuery<GetUserCustomerQuery>(queryString).
                     First();
                 return result;
             }

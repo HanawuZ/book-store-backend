@@ -19,8 +19,12 @@ public class CreateCartRepository {
     try {
       Integer affectedRows = entityManager
           .createNativeQuery(
-              "REPLACE INTO carts (customer_id, book_id, quantity, created_date, updated_date) VALUES (:customerId, :bookId, :quantity, :createdDate, :updatedDate)",
+              "INSERT INTO carts (id, customer_id, book_id, quantity, created_date, updated_date)\n" + //
+              "VALUES (:id, :customerId, :bookId, :quantity, :createdDate, :updatedDate)\n" + //
+              "ON CONFLICT (id)\n" + //
+              "DO UPDATE SET quantity = :quantity, updated_date = :updatedDate",
               Cart.class)
+          .setParameter("id", cart.getId())
           .setParameter("customerId", cart.getCustomerId())
           .setParameter("bookId", cart.getBookId())
           .setParameter("quantity", cart.getQuantity())

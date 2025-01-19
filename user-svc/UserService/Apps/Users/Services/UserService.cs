@@ -12,7 +12,7 @@ namespace UserService.Apps.Users.Services
 {
     public interface IUserService
     {
-        public HttpServe<string> SignUp(SignUpRequest request);
+        public HttpServe<string?> SignUp(SignUpRequest request);
         public HttpServe<SignInResponse?> SignIn(SignInRequest request);
     }
     public class ConcretedUserService : IUserService
@@ -29,7 +29,7 @@ namespace UserService.Apps.Users.Services
 
         }
 
-        public HttpServe<string> SignUp(SignUpRequest request)
+        public HttpServe<string?> SignUp(SignUpRequest request)
         {
             try
             {
@@ -77,16 +77,14 @@ namespace UserService.Apps.Users.Services
                     CustomerId = newCustomer.Id,
                 };
 
-                Console.WriteLine("UserService");
-
                 bool complete = _userRepository.CreateUser(newUser, newCustomer, userMapping);
 
                 if (complete)
                 {
-                    return new HttpServe<string>(StatusCodes.Status201Created, "สมัครสมาชิกสำเร็จ!", null);
+                    return new HttpServe<string?>(StatusCodes.Status201Created, "สมัครสมาชิกสำเร็จ!", null);
                 }
 
-                return new HttpServe<string>(StatusCodes.Status400BadRequest, "อุ๊บ! สมัครสมาชิกไม่สำเร็จ...", null);
+                return new HttpServe<string?>(StatusCodes.Status400BadRequest, "อุ๊บ! สมัครสมาชิกไม่สำเร็จ...", null);
 
 
             }
@@ -114,8 +112,7 @@ namespace UserService.Apps.Users.Services
                 }
 
 
-                GetUserQuery? existedUser = _userRepository.GetUserByUsernameOrEmail(request.UsernameOrEmail);
-                Console.WriteLine($"{existedUser.Username}, {existedUser.Password}");
+                GetUserCustomerQuery? existedUser = _userRepository.GetUserByUsernameOrEmail(request.UsernameOrEmail);
                 if (existedUser == null)
                 {
                     return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "ไม่พบข้อมูลผู้ใช้", null);

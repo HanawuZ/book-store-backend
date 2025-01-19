@@ -11,7 +11,7 @@ namespace UserService.Libs.Security
 {
     public interface IJwtUtility
     {
-        public string GenerateUserToken(GetUserQuery user);
+        public string GenerateUserToken(GetUserCustomerQuery user);
     }
     public class JwtUtility: IJwtUtility
     {
@@ -21,7 +21,7 @@ namespace UserService.Libs.Security
         { 
         }
 
-        public string GenerateUserToken(GetUserQuery user)
+        public string GenerateUserToken(GetUserCustomerQuery user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             byte[] securityKey = Encoding.ASCII.GetBytes(SECRET);
@@ -33,6 +33,7 @@ namespace UserService.Libs.Security
             var claim = new ClaimsIdentity();
             claim.AddClaim(new Claim(ClaimTypes.Name, user.Username));
             claim.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+            claim.AddClaim(new Claim("customer_id", user.CustomerId));
             claim.AddClaim(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
             DateTime expiredTime = DateTime.Now.AddMinutes(120);

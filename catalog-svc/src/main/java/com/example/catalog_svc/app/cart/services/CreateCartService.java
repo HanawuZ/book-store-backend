@@ -42,6 +42,7 @@ public class CreateCartService {
       List<Cart> carts = getCartRepository.getCartByCustomerId(request.getCustomerId());
       
       Cart newItem = new Cart();
+      
       newItem.setId(UUID.randomUUID().toString());
       newItem.setBookId(request.getBookId());
       newItem.setCustomerId(request.getCustomerId());
@@ -54,13 +55,17 @@ public class CreateCartService {
       newItem.setUpdatedDate(updatedDate);
 
       for (Integer i = 0; i < carts.size(); i++) {
+        
         Cart item = carts.get(i);
         String bookId = item.getBookId();
         Integer quantity = item.getQuantity();
-
-        if (bookId == request.getBookId()) {
+        
+        System.out.printf("id: %s, bookId: %s, customerId: %s\n", item.getId(), bookId, request.getCustomerId());
+        System.out.println(request.getBookId());
+        System.out.println(request.getBookId().equals(bookId));
+        if (request.getBookId().equals(bookId)) {
           Integer newQty = quantity + request.getQuantity();
-          
+          System.out.println("Matched book");
           newItem.setId(item.getId());
           newItem.setQuantity(newQty);
           newItem.setCreatedDate(createdDate);
