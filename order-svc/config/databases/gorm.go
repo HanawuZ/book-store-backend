@@ -9,15 +9,31 @@ import (
 )
 
 type GormDatabase struct {
+	DatabaseConfig
 	Database *gorm.DB
 }
 
-func NewDatabase() IDatabase {
-	return &GormDatabase{}
+type IGormDatabase interface {
+	IDatabase
+	GetDatabase() *gorm.DB
+}
+
+func New(databaseConfig DatabaseConfig) IGormDatabase {
+	return &GormDatabase{
+		DatabaseConfig: databaseConfig,
+	}
 }
 
 func (d *GormDatabase) Connect() {
-	dsn := "root:G5!kT@2y9B#zU8%w@tcp(localhost:3306)/bookshop-order"
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+		d.Username,
+		d.Password,
+		d.Host,
+		d.Port,
+		d.DatabaseName,
+	)
+
 	dial := mysql.Open(dsn)
 	db, err := gorm.Open(dial)
 	if err != nil {
@@ -27,6 +43,7 @@ func (d *GormDatabase) Connect() {
 
 	fmt.Println("Successfully connected to database....")
 	d.Database = db
+
 }
 
 func (d *GormDatabase) Migrate() {
@@ -42,4 +59,8 @@ func (d *GormDatabase) Migrate() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (d *GormDatabase) GetDatabase() *gorm.DB {
+	return d.Database
 }

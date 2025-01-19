@@ -1,8 +1,9 @@
 package server
 
 import (
-	"github.com/HanawuZ/book-store-backend/order-svc/config/databases"
+	"github.com/HanawuZ/book-store-backend/order-svc/config"
 	"github.com/HanawuZ/book-store-backend/order-svc/config/logger"
+	"github.com/HanawuZ/book-store-backend/order-svc/pkgs/middlewares"
 	"github.com/HanawuZ/book-store-backend/order-svc/server/routes"
 	"github.com/gofiber/fiber/v2"
 )
@@ -17,7 +18,9 @@ func New() IServer {
 	}
 }
 
-func (s *Server) Setup(db databases.IDatabase) {
+func (s *Server) Setup(config config.IAppConfig) {
+
+	authMiddleware := middlewares.New(config.GetAuth().Secret)
 
 	s.App.Use(logger.NewFiberLogger())
 
@@ -27,6 +30,12 @@ func (s *Server) Setup(db databases.IDatabase) {
 	s.App.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
+
+	s.App.Use(authMiddleware.AuthorizationCustomerToken()).
+		Get("/authorize", func(c *fiber.Ctx) error {
+			return c.SendString("OK! Authorize!")
+		})
+
 }
 
 func (s *Server) Start() {
