@@ -18,13 +18,13 @@ type AppConfigFromFile struct {
 //----------------------------------------------
 
 type AppConfig struct {
-	Database databases.IDatabase
+	Database databases.IGormDatabase
 	Auth     auth.JWTConfig
 }
 
 type IAppConfig interface {
 	GetAuth() auth.JWTConfig
-	GetDatabase() databases.IDatabase
+	GetDatabase() databases.IGormDatabase
 }
 
 func New() IAppConfig {
@@ -69,6 +69,6 @@ func (a *AppConfig) GetAuth() auth.JWTConfig {
 	return a.Auth
 }
 
-func (a *AppConfig) GetDatabase() databases.IDatabase {
+func (a *AppConfig) GetDatabase() databases.IGormDatabase {
 	return a.Database
 }
