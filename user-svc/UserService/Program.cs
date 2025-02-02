@@ -4,11 +4,12 @@ using System.Text.Json;
 using UserService.Apps.Users.Services;
 using UserService.Apps.Users.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using UserService.Libs.Security;
 using UserService.Configs.Middlewares;
-using Microsoft.Extensions.DependencyInjection;
+using UserService.Apps.CustomerAddresses.Repository;
+using UserService.Apps.CustomerAddresses.Services;
+using UserService.Apps.HealthCheck.PingPong;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +23,11 @@ builder.Services.AddControllers().
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddLogging();
-
+builder.Services.AddGrpc();
+builder.Services.AddGrpcReflection();
 
 builder.Services.AddDbContext<PostgresDatabaseContext>(options =>
     options
@@ -44,8 +45,11 @@ builder.Services.AddCors(options =>
        });
 });
 
+
 builder.Services.AddScoped<IUserService, ConcretedUserService>();
 builder.Services.AddScoped<IUserRepository, ConcretedUserRepository>();
+builder.Services.AddScoped<ICustomerAddressService, ConcretedCustomerAddressService>();
+builder.Services.AddScoped<ICustomerAddressRepository, ConcretedCustomerAddressRepository>();
 builder.Services.AddScoped<IJwtUtility, JwtUtility>();
 builder.Services
     .AddAuthentication(options =>
@@ -54,7 +58,16 @@ builder.Services
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(JwtBearerMiddleware.ConfigureJwtBearerOptions);
-    
+
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    // gRPC endpoint
+//    options.Listen(IPAddress.Any, 5005, listenOptions =>
+//    {
+//        listenOptions.Protocols = HttpProtocols.Http2; // Force HTTP/2 for gRPC
+//    });
+//});
+
 var app = builder.Build();
 // Test database connection during startup
 using (var scope = app.Services.CreateScope())
@@ -83,14 +96,14 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.MapGrpcReflectionService();
 }
-
 
 app.UseHttpsRedirection();
 app.UseCors("MyAllowSpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
+app.MapGrpcService<PingPongGrpcServerImpl>();
 
 app.Run();

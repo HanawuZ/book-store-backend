@@ -16,6 +16,7 @@ namespace UserService.Configs.Databases
         public DbSet<Customer> Customers { get; set; }
 
         public DbSet<UserMapping> UserMappings { get; set; }
+        public DbSet<CustomerAddress> CustomerAddresses { get; set; }
 
     }
 }

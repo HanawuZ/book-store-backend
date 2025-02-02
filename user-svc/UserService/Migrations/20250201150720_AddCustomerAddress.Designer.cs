@@ -12,8 +12,8 @@ using UserService.Configs.Databases;
 namespace UserService.Migrations
 {
     [DbContext(typeof(PostgresDatabaseContext))]
-    [Migration("20250114142125_Migrate140120252106")]
-    partial class Migrate140120252106
+    [Migration("20250201150720_AddCustomerAddress")]
+    partial class AddCustomerAddress
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,6 +70,85 @@ namespace UserService.Migrations
                         .HasName("pk_customers");
 
                     b.ToTable("customers", (string)null);
+                });
+
+            modelBuilder.Entity("UserService.Models.Entities.CustomerAddress", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("address");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("text")
+                        .HasColumnName("country");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_date");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("customer_id");
+
+                    b.Property<string>("District")
+                        .HasColumnType("text")
+                        .HasColumnName("district");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("latitude");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision")
+                        .HasColumnName("longitude");
+
+                    b.Property<string>("Province")
+                        .HasColumnType("text")
+                        .HasColumnName("province");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("text")
+                        .HasColumnName("street");
+
+                    b.Property<string>("SubDistrict")
+                        .HasColumnType("text")
+                        .HasColumnName("sub_district");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("updated_by");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updated_date");
+
+                    b.Property<string>("Zipcode")
+                        .HasColumnType("text")
+                        .HasColumnName("zipcode");
+
+                    b.HasKey("Id")
+                        .HasName("pk_customer_addresses");
+
+                    b.HasIndex("CustomerId")
+                        .HasDatabaseName("ix_customer_addresses_customer_id");
+
+                    b.ToTable("customer_addresses", (string)null);
                 });
 
             modelBuilder.Entity("UserService.Models.Entities.User", b =>
@@ -172,6 +251,23 @@ namespace UserService.Migrations
                         .HasName("pk_user_mappings");
 
                     b.ToTable("user_mappings", (string)null);
+                });
+
+            modelBuilder.Entity("UserService.Models.Entities.CustomerAddress", b =>
+                {
+                    b.HasOne("UserService.Models.Entities.Customer", "Customer")
+                        .WithMany("CustomerAddresses")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_customer_addresses_customers_customer_id");
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("UserService.Models.Entities.Customer", b =>
+                {
+                    b.Navigation("CustomerAddresses");
                 });
 #pragma warning restore 612, 618
         }

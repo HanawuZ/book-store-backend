@@ -1,8 +1,40 @@
 [
   {
-    "ContainingType": "UserService.Controllers.HealthCheckController",
-    "Method": "Get",
-    "RelativePath": "api/health/check",
+    "ContainingType": "UserService.Apps.Users.Controllers.UserController",
+    "Method": "SignIn",
+    "RelativePath": "api/users/sign-in",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "UserService.Apps.Users.Models.Requests.SignInRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "UserService.Apps.Users.Controllers.UserController",
+    "Method": "SignUp",
+    "RelativePath": "api/users/sign-up",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "UserService.Apps.Users.Models.Requests.SignUpRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "UserService.Apps.HealthCheck.HealthcheckController",
+    "Method": "AuthenticatedGet",
+    "RelativePath": "health",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -18,26 +50,5 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "UserService.Controllers.WeatherForecastController",
-    "Method": "Get",
-    "RelativePath": "weather-forecast",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[UserService.WeatherForecast, UserService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ],
-    "EndpointName": "GetWeatherForecast"
   }
 ]

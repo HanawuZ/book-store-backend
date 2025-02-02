@@ -33,5 +33,7 @@ namespace UserService.Models.Entities
 
         [Column("updated_by")]
         public required string UpdatedBy { get; set; }
+
+        public ICollection<CustomerAddress> CustomerAddresses { get; set; }
     }
 }

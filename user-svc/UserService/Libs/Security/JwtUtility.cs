@@ -12,6 +12,7 @@ namespace UserService.Libs.Security
     public interface IJwtUtility
     {
         public string GenerateUserToken(GetUserCustomerQuery user);
+        public string? GetCustomerId(HttpContext context);
     }
     public class JwtUtility: IJwtUtility
     {
@@ -48,24 +49,40 @@ namespace UserService.Libs.Security
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
 
-            //{
-            //    Subject = new ClaimsIdentity(new[] {
-            //    new Claim(ClaimTypes.Name, user.Username),
-            //    new Claim(ClaimTypes.Email, user.Email),
-            //    new Claim(JwtRegisteredClaimNames.Exp, expiredDate.ToString("yyyyMMddHHmmss")),
-            //    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            //}),
-            //    Expires = expiredDate,
-            //    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(securityKey), SecurityAlgorithms.HmacSha256Signature)
-            //};
-
-            //Console.WriteLine("Generating access token");
-
-            //var tokenHandler = new JwtSecurityTokenHandler();
-            //var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            //return tokenHandler.WriteToken(token);
-
         }
+
+        public string? GetCustomerId(HttpContext context)
+        {
+            try
+            {
+                string authorization = context.Request.Headers["Authorization"].ToString();
+                if (String.IsNullOrEmpty(authorization)) {
+                    throw new Exception("no authorization header found.");
+                }
+
+                string token = authorization.Split(" ")[1];
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtSecurityToken = handler.ReadJwtToken(token);
+
+                var claims = jwtSecurityToken.Claims.ToList();
+
+                string? customerId = null;
+                foreach (var claim in claims)
+                {
+                    if (claim.Type == "customer_id")
+                    {
+                        customerId = claim.Value;
+                        break;
+                    }
+                }
+                return customerId;
+            } 
+            catch 
+            {
+                throw;
+            }
+        }
+
     }
 }
