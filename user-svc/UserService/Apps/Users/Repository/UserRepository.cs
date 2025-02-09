@@ -8,7 +8,7 @@ namespace UserService.Apps.Users.Repository
 
     public interface IUserRepository
     {
-        public bool CreateUser(User newUser, Customer newCustomer, UserMapping userMapping);
+        public bool CreateUser(User newUser, UserService.Models.Entities.Customer newCustomer, UserMapping userMapping);
         public GetUserCustomerQuery? GetUserByUsernameOrEmail(string usernameOrEmail);
     }
 
@@ -22,7 +22,7 @@ namespace UserService.Apps.Users.Repository
             _dbContext = dbContext;
         }
 
-        public bool CreateUser(User newUser, Customer newCustomer, UserMapping userMapping) 
+        public bool CreateUser(User newUser, UserService.Models.Entities.Customer newCustomer, UserMapping userMapping) 
         {
             try {
                 var transaction = _dbContext.Database.BeginTransaction();

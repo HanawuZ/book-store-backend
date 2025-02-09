@@ -23,9 +23,7 @@ public class GetCartService {
       if (cartItems.isEmpty()) {
         return new BaseResponse<>(4000, "Cart is empty", null);
       }
-
-      System.out.println("Get cart items");
-
+      
       return new BaseResponse<>(2000, "Success", cartItems);
 
     } catch (Exception exception) {

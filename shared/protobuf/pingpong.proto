@@ -5,6 +5,7 @@ option go_package = "./pingpong";
 option java_multiple_files = true;
 option java_package = "com.example.catalog_svc.app.grpc.health.pingpong";
 option java_outer_classname = "PingPongProto";
+option csharp_namespace = "UserService.Apps.HealthCheck.PingPong";
 
 // this will be package of the generated code
 package pingpong;

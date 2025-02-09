@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Apps\CustomerAddresses\GrpcServer\" />
+    <Folder Include="Apps\Customer\" />
   </ItemGroup>
 
 

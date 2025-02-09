@@ -31,10 +31,13 @@ public class CartItem {
   @Column(name = "publication_year")
   private Date publicationYear;
 
+  @Column(name = "publisher_name")
+  private String publisherName;
+
   @Column(name = "title")
   private String title;
 
-  public CartItem(String bookId, Integer quantity, Integer copiesAvailable, String genre, String isbn, Double price, Date publicationYear, String title) {
+  public CartItem(String bookId, Integer quantity, Integer copiesAvailable, String genre, String isbn, Double price, Date publicationYear, String title, String publisherName) {
     this.bookId = bookId;
     this.quantity = quantity;
     this.copiesAvailable = copiesAvailable;
@@ -43,6 +46,7 @@ public class CartItem {
     this.price = price;
     this.publicationYear = publicationYear;
     this.title = title;
+    this.publisherName = publisherName;
   }
 
 }

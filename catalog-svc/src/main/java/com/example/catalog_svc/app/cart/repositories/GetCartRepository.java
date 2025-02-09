@@ -40,9 +40,11 @@ public class GetCartRepository {
               "b.isbn,\n" + //
               "b.price,\n" + //
               "b.publication_year,\n" + //
-              "b.title\n" + //
+              "b.title,\n" + //
+              "p.name AS publisher_name\n" + //
               "FROM carts c\n" + //
               "LEFT JOIN books b ON c.book_id = b.id\n" + //
+              "LEFT JOIN publishers p ON b.publisher_id = p.id\n" + //
               "WHERE c.customer_id = :customerId", CartItem.class)
           .setParameter("customerId", customerId)
           .getResultList();

@@ -6,9 +6,6 @@ import (
 )
 
 func NewFiberLogger() func(*fiber.Ctx) error {
-	loggerConfig := logger.Config{
-		Format: "[${ip}]:${port} ${status} - ${method} ${path}\n",
-	}
-	logger := logger.New(loggerConfig)
+	logger := logger.New()
 	return logger
 }

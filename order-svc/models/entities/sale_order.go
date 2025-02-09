@@ -39,6 +39,7 @@ type SaleOrder struct {
 	CreatedDate       time.Time   `gorm:"column:created_date;type:timestamp;autoCreateTime"`
 	UpdatedDate       time.Time   `gorm:"column:updated_date;type:timestamp;autoUpdateTime"`
 	Note              *string     `gorm:"column:note;type:text"`
+	CustomerId        string      `gorm:"column:customer_id;type:text;not null"`
 	CustomerFirstName string      `gorm:"column:customer_firstname;type:text;not null"`
 	CustomerLastName  *string     `gorm:"column:customer_lastname;type:text"`
 	CustomerPhoneOne  *string     `gorm:"column:customer_phone_one;type:text"`

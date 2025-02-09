@@ -3,14 +3,15 @@ package databases
 import (
 	"fmt"
 
+	"github.com/HanawuZ/book-store-backend/order-svc/config"
 	"github.com/HanawuZ/book-store-backend/order-svc/models/entities"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 type GormDatabase struct {
-	DatabaseConfig
-	Database *gorm.DB
+	Database
+	DatabaseConnection *gorm.DB
 }
 
 type IGormDatabase interface {
@@ -18,13 +19,19 @@ type IGormDatabase interface {
 	GetDatabase() *gorm.DB
 }
 
-func New(databaseConfig DatabaseConfig) IGormDatabase {
+func New(config config.DatabaseConfig) IGormDatabase {
 	return &GormDatabase{
-		DatabaseConfig: databaseConfig,
+		Database: Database{
+			Username:     config.Username,
+			Password:     config.Password,
+			Host:         config.Host,
+			Port:         config.Port,
+			DatabaseName: config.DatabaseName,
+		},
 	}
 }
 
-func (d *GormDatabase) Connect() {
+func (d *GormDatabase) Connect() error {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 		d.Username,
@@ -38,29 +45,34 @@ func (d *GormDatabase) Connect() {
 	db, err := gorm.Open(dial)
 	if err != nil {
 		fmt.Println("Error connecting to database")
-		panic(err)
+		return err
 	}
+
+	db = db.Debug()
 
 	fmt.Println("Successfully connected to database....")
-	d.Database = db
+	d.DatabaseConnection = db
 
+	return nil
 }
 
-func (d *GormDatabase) Migrate() {
-	if d.Database == nil {
-		panic("Database not connected, please connect first")
+func (d *GormDatabase) Migrate() error {
+	if d.DatabaseConnection == nil {
+		return fmt.Errorf("database not connected, please connect first")
 	}
 
-	err := d.Database.AutoMigrate(
+	err := d.DatabaseConnection.AutoMigrate(
 		&entities.SaleOrder{},
 		&entities.SaleItem{},
 	)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }
 
 func (d *GormDatabase) GetDatabase() *gorm.DB {
-	return d.Database
+	return d.DatabaseConnection
 }

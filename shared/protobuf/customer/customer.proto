@@ -1,0 +1,22 @@
+syntax="proto3";
+
+option go_package = "./customer";
+
+option csharp_namespace = "UserService.Apps.Customer.Grpc.GrpcCustomerServer";
+
+package customer;
+
+service GrpcCustomerService {
+  rpc GetCustomerById(GetCustomerRequestProto) returns (GetCustomerResponseProto);
+}
+
+message GetCustomerRequestProto {
+  string customerId = 1;
+}
+
+message GetCustomerResponseProto {
+  string firstname = 1;
+  optional string lastname = 2;
+  optional string phoneOne = 3; 
+  optional string phoneTwo = 4; 
+}

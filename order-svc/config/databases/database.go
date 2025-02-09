@@ -1,14 +1,14 @@
 package databases
 
-type DatabaseConfig struct {
-	Username     string `yaml:"username"`
-	Password     string `yaml:"password"`
-	Host         string `yaml:"host"`
-	Port         string `yaml:"port"`
-	DatabaseName string `yaml:"database_name"`
+type Database struct {
+	Username     string
+	Password     string
+	Host         string
+	Port         string
+	DatabaseName string
 }
 
 type IDatabase interface {
-	Connect()
-	Migrate()
+	Connect() error
+	Migrate() error
 }

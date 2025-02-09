@@ -19,14 +19,12 @@ public class GrpcCartServiceImpl  extends GrpcCartServiceImplBase {
 
   @Override
   public void getCartItemByCustomerProto(CartItemRequestProto request, StreamObserver<CartItemResponseProto> responseObserver) {
-    System.out.println("getCartItemByCustomer");
     String customerId = request.getCustomerId();
     if (customerId.isEmpty()) {
       responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT.asRuntimeException());
       return;
     }
 
-    System.out.println("REQUEST: "+ customerId);
     BaseResponse<List<CartItem>> response = cartService.getCartItemByCustomer(customerId);
     if (response.getCode() != 2000) {
       responseObserver.onError(io.grpc.Status.INTERNAL.asRuntimeException());
@@ -48,6 +46,7 @@ public class GrpcCartServiceImpl  extends GrpcCartServiceImplBase {
       itemProto.setGenre(item.getGenre());
       itemProto.setIsbn(item.getIsbn());
       itemProto.setPrice(item.getPrice());
+      itemProto.setPublisherName(item.getPublisherName());
 
       // Format date to string with format 2001-04-05
       String formattedDate = item.getPublicationYear().toString();

@@ -138,4 +138,16 @@ public interface CartItemProtoOrBuilder extends
    */
   com.google.protobuf.ByteString
       getTitleBytes();
+
+  /**
+   * <code>string publisherName = 9;</code>
+   * @return The publisherName.
+   */
+  java.lang.String getPublisherName();
+  /**
+   * <code>string publisherName = 9;</code>
+   * @return The bytes for publisherName.
+   */
+  com.google.protobuf.ByteString
+      getPublisherNameBytes();
 }

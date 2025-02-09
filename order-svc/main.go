@@ -7,11 +7,10 @@ import (
 
 func main() {
 
-	config := config.New()
-	database := config.GetDatabase()
-
-	database.Connect()
-	database.Migrate()
+	config, err := config.LoadConfig()
+	if err != nil {
+		panic(err)
+	}
 
 	server := server.New()
 	server.Setup(config)

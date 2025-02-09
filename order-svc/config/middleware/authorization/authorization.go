@@ -1,9 +1,9 @@
-package middlewares
+package authorization
 
 import (
-	"fmt"
 	"net/http"
 
+	"github.com/HanawuZ/book-store-backend/order-svc/config"
 	"github.com/HanawuZ/book-store-backend/order-svc/pkgs/http/httpserve"
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
@@ -11,21 +11,25 @@ import (
 
 type AuthorizationMiddleware struct {
 	Secret string
+	Issuer string
 }
 
 type IAuthorizationMiddleware interface {
 	AuthorizationCustomerToken() fiber.Handler
 }
 
-func New(secret string) IAuthorizationMiddleware {
-	if secret == "" {
+func New(authConfig config.AuthConfig) IAuthorizationMiddleware {
+	if authConfig.Secret == "" {
 		panic("secret is required")
 	}
 
-	fmt.Println("SECRET: " + secret)
+	if authConfig.Issuer == "" {
+		panic("issuer is required")
+	}
 
 	return &AuthorizationMiddleware{
-		Secret: secret,
+		Secret: authConfig.Secret,
+		Issuer: authConfig.Issuer,
 	}
 }
 

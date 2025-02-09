@@ -8,6 +8,8 @@ namespace UserService.Apps.CustomerAddresses.Repository
     {
         public List<CustomerAddress> GetCustomerAddress(string customerId);
 
+        public CustomerAddress? GetCustomerAddressById(string customerAddressId);
+
         public bool CreateCustomerAddress(CustomerAddress customerAddress);
     }
 
@@ -35,6 +37,23 @@ namespace UserService.Apps.CustomerAddresses.Repository
                 return results;
             }
             catch 
+            {
+                throw;
+            }
+        }
+
+        public CustomerAddress? GetCustomerAddressById(string customerAddressId)
+        {
+            try
+            {
+                FormattableString queryString = $"""
+                    SELECT * FROM 
+                    customer_addresses 
+                    WHERE id = {customerAddressId}
+                """;
+                return _dbContext.CustomerAddresses.FromSql(queryString).FirstOrDefault();
+            }
+            catch
             {
                 throw;
             }

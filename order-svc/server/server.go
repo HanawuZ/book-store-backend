@@ -6,5 +6,5 @@ import (
 
 type IServer interface {
 	Start()
-	Setup(config config.IAppConfig)
+	Setup(config *config.AppConfig)
 }

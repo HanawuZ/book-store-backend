@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using UserService.Apps.Users.Models.Queries;
+﻿using UserService.Apps.Users.Models.Queries;
 using UserService.Apps.Users.Models.Requests;
 using UserService.Apps.Users.Models.Responses;
 using UserService.Apps.Users.Repository;
@@ -57,7 +56,7 @@ namespace UserService.Apps.Users.Services
                     UpdatedBy = "admin"
                 };
 
-                Customer newCustomer = new Customer
+                UserService.Models.Entities.Customer newCustomer = new UserService.Models.Entities.Customer
                 {
                     Id = Guid.NewGuid().ToString(),
                     FirstName = request.Firstname,

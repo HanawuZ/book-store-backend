@@ -50,17 +50,18 @@ public final class CartProto {
   static {
     java.lang.String[] descriptorData = {
       "\n\017cart/cart.proto\022\004cart\"*\n\024CartItemReque" +
-      "stProto\022\022\n\ncustomerId\030\001 \001(\t\"\236\001\n\rCartItem" +
+      "stProto\022\022\n\ncustomerId\030\001 \001(\t\"\265\001\n\rCartItem" +
       "Proto\022\016\n\006bookId\030\001 \001(\t\022\020\n\010quantity\030\002 \001(\005\022" +
       "\027\n\017copiesAvailable\030\003 \001(\005\022\r\n\005genre\030\004 \001(\t\022" +
       "\014\n\004isbn\030\005 \001(\t\022\r\n\005price\030\006 \001(\001\022\027\n\017publicat" +
-      "ionYear\030\007 \001(\t\022\r\n\005title\030\010 \001(\t\";\n\025CartItem" +
-      "ResponseProto\022\"\n\005items\030\001 \003(\0132\023.cart.Cart" +
-      "ItemProto2h\n\017GrpcCartService\022U\n\032GetCartI" +
-      "temByCustomerProto\022\032.cart.CartItemReques" +
-      "tProto\032\033.cart.CartItemResponseProtoB<\n%c" +
-      "om.example.catalog_svc.app.grpc.cartB\tCa" +
-      "rtProtoP\001Z\006./cartb\006proto3"
+      "ionYear\030\007 \001(\t\022\r\n\005title\030\010 \001(\t\022\025\n\rpublishe" +
+      "rName\030\t \001(\t\";\n\025CartItemResponseProto\022\"\n\005" +
+      "items\030\001 \003(\0132\023.cart.CartItemProto2h\n\017Grpc" +
+      "CartService\022U\n\032GetCartItemByCustomerProt" +
+      "o\022\032.cart.CartItemRequestProto\032\033.cart.Car" +
+      "tItemResponseProtoB<\n%com.example.catalo" +
+      "g_svc.app.grpc.cartB\tCartProtoP\001Z\006./cart" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -77,7 +78,7 @@ public final class CartProto {
     internal_static_cart_CartItemProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_cart_CartItemProto_descriptor,
-        new java.lang.String[] { "BookId", "Quantity", "CopiesAvailable", "Genre", "Isbn", "Price", "PublicationYear", "Title", });
+        new java.lang.String[] { "BookId", "Quantity", "CopiesAvailable", "Genre", "Isbn", "Price", "PublicationYear", "Title", "PublisherName", });
     internal_static_cart_CartItemResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_cart_CartItemResponseProto_fieldAccessorTable = new

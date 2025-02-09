@@ -9,6 +9,9 @@ using UserService.Configs.Middlewares;
 using UserService.Apps.CustomerAddresses.Repository;
 using UserService.Apps.CustomerAddresses.Services;
 using UserService.Apps.HealthCheck.PingPong;
+using UserService.Apps.CustomerAddresses.Grpc.GrpcCustomerAddressServer;
+using UserService.Apps.Customer.Repository;
+using UserService.Apps.Customer.Grpc.GrpcCustomerServer;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +53,7 @@ builder.Services.AddScoped<IUserService, ConcretedUserService>();
 builder.Services.AddScoped<IUserRepository, ConcretedUserRepository>();
 builder.Services.AddScoped<ICustomerAddressService, ConcretedCustomerAddressService>();
 builder.Services.AddScoped<ICustomerAddressRepository, ConcretedCustomerAddressRepository>();
+builder.Services.AddScoped<ICustomerRepository, ConcretedCustomerRepository>();
 builder.Services.AddScoped<IJwtUtility, JwtUtility>();
 builder.Services
     .AddAuthentication(options =>
@@ -105,5 +109,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapGrpcService<PingPongGrpcServerImpl>();
+app.MapGrpcService<CustomerAddressServerImpl>();
+app.MapGrpcService<CustomerServerImpl>();
 
 app.Run();

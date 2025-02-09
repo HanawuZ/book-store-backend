@@ -2,11 +2,13 @@ package routes
 
 import (
 	_grpcCart "github.com/HanawuZ/book-store-backend/order-svc/app/grpc/cart"
+	_grpcCustomer "github.com/HanawuZ/book-store-backend/order-svc/app/grpc/customer"
+	_grpcCustomerAddress "github.com/HanawuZ/book-store-backend/order-svc/app/grpc/customer/address"
 	_saleOrderController "github.com/HanawuZ/book-store-backend/order-svc/app/saleorders/controllers"
 	_saleOrderRepo "github.com/HanawuZ/book-store-backend/order-svc/app/saleorders/repositories"
 	_saleOrderSvc "github.com/HanawuZ/book-store-backend/order-svc/app/saleorders/services"
 	"github.com/HanawuZ/book-store-backend/order-svc/config/databases"
-	"github.com/HanawuZ/book-store-backend/order-svc/pkgs/middlewares"
+	"github.com/HanawuZ/book-store-backend/order-svc/config/middleware/authorization"
 	"github.com/gofiber/fiber/v2"
 	"google.golang.org/grpc"
 )
@@ -14,17 +16,28 @@ import (
 func SetupSaleOrderRoutes(
 	router fiber.Router,
 	database databases.IGormDatabase,
-	grpcConnection *grpc.ClientConn,
-	authMiddleware middlewares.IAuthorizationMiddleware,
+	grpcCatalogServiceClientConnection, grpcUserServiceClientConnection *grpc.ClientConn,
+	authMiddleware authorization.IAuthorizationMiddleware,
 ) {
 
-	grpcCartServiceClient := _grpcCart.NewGrpcCartServiceClient(grpcConnection)
+	grpcCartServiceClient := _grpcCart.NewGrpcCartServiceClient(grpcCatalogServiceClientConnection)
 	grpcCartServiceClientWrapper := _grpcCart.NewGrpcCartServiceClientWrapper(grpcCartServiceClient)
+
+	grpcCustomerAddressServiceClient := _grpcCustomerAddress.NewGrpcCustomerAddressServiceClient(grpcUserServiceClientConnection)
+	grpcCustomerAddressServiceClientWrapper := _grpcCustomerAddress.NewGrpcCustomerAddressServiceClientWrapper(grpcCustomerAddressServiceClient)
+
+	grpcCustomerServiceClient := _grpcCustomer.NewGrpcCustomerServiceClient(grpcUserServiceClientConnection)
+	grpcCustomerServiceClientWrapper := _grpcCustomer.NewGrpcCustomerServiceClientWrapper(grpcCustomerServiceClient)
 
 	db := database.GetDatabase()
 
 	saleOrderRepository := _saleOrderRepo.NewSaleOrderRepository(db)
-	saleOrderService := _saleOrderSvc.NewSaleOrderService(saleOrderRepository, grpcCartServiceClientWrapper)
+	saleOrderService := _saleOrderSvc.NewSaleOrderService(
+		saleOrderRepository,
+		grpcCartServiceClientWrapper,
+		grpcCustomerAddressServiceClientWrapper,
+		grpcCustomerServiceClientWrapper,
+	)
 	saleOrderController := _saleOrderController.NewSaleOrderController(saleOrderService)
 
 	router.Get("/sale-order", func(c *fiber.Ctx) error {

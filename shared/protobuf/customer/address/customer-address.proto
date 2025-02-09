@@ -1,0 +1,27 @@
+syntax="proto3";
+
+option go_package = "./customer_address";
+
+option csharp_namespace = "UserService.Apps.CustomerAddresses.Grpc.GrpcCustomerAddressServer";
+
+package customerAddress;
+
+service GrpcCustomerAddressService {
+  rpc GetCustomerAddress(GetCustomerAddressRequestProto) returns (GetCustomerAddressResponseProto);
+}
+
+message GetCustomerAddressRequestProto {
+  string customerAddressId = 1;
+}
+
+message GetCustomerAddressResponseProto {
+  string address = 1;
+  double latitude = 2;
+  double longitude = 3;
+  optional string street = 4;
+  optional string subDistrict = 5;
+  optional string district = 6;
+  optional string province = 7;
+  optional string country = 8;
+  optional string zipcode = 9;
+}

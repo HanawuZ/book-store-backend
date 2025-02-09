@@ -26,6 +26,7 @@ message CartItemProto {
   double price = 6;              // Corresponds to "price"
   string publicationYear = 7;    // Corresponds to "publicationYear"
   string title = 8;              // Corresponds to "title"
+  string publisherName = 9;
 }
 
 message CartItemResponseProto {

@@ -32,6 +32,7 @@ private static final long serialVersionUID = 0L;
     isbn_ = "";
     publicationYear_ = "";
     title_ = "";
+    publisherName_ = "";
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor
@@ -327,6 +328,45 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int PUBLISHERNAME_FIELD_NUMBER = 9;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object publisherName_ = "";
+  /**
+   * <code>string publisherName = 9;</code>
+   * @return The publisherName.
+   */
+  @java.lang.Override
+  public java.lang.String getPublisherName() {
+    java.lang.Object ref = publisherName_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      publisherName_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string publisherName = 9;</code>
+   * @return The bytes for publisherName.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getPublisherNameBytes() {
+    java.lang.Object ref = publisherName_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      publisherName_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -365,6 +405,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessage.isStringEmpty(title_)) {
       com.google.protobuf.GeneratedMessage.writeString(output, 8, title_);
     }
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(publisherName_)) {
+      com.google.protobuf.GeneratedMessage.writeString(output, 9, publisherName_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -401,6 +444,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessage.isStringEmpty(title_)) {
       size += com.google.protobuf.GeneratedMessage.computeStringSize(8, title_);
     }
+    if (!com.google.protobuf.GeneratedMessage.isStringEmpty(publisherName_)) {
+      size += com.google.protobuf.GeneratedMessage.computeStringSize(9, publisherName_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -433,6 +479,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getPublicationYear())) return false;
     if (!getTitle()
         .equals(other.getTitle())) return false;
+    if (!getPublisherName()
+        .equals(other.getPublisherName())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -461,6 +509,8 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getPublicationYear().hashCode();
     hash = (37 * hash) + TITLE_FIELD_NUMBER;
     hash = (53 * hash) + getTitle().hashCode();
+    hash = (37 * hash) + PUBLISHERNAME_FIELD_NUMBER;
+    hash = (53 * hash) + getPublisherName().hashCode();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -600,6 +650,7 @@ private static final long serialVersionUID = 0L;
       price_ = 0D;
       publicationYear_ = "";
       title_ = "";
+      publisherName_ = "";
       return this;
     }
 
@@ -657,6 +708,9 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000080) != 0)) {
         result.title_ = title_;
       }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.publisherName_ = publisherName_;
+      }
     }
 
     @java.lang.Override
@@ -703,6 +757,11 @@ private static final long serialVersionUID = 0L;
       if (!other.getTitle().isEmpty()) {
         title_ = other.title_;
         bitField0_ |= 0x00000080;
+        onChanged();
+      }
+      if (!other.getPublisherName().isEmpty()) {
+        publisherName_ = other.publisherName_;
+        bitField0_ |= 0x00000100;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -771,6 +830,11 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000080;
               break;
             } // case 66
+            case 74: {
+              publisherName_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000100;
+              break;
+            } // case 74
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1376,6 +1440,78 @@ private static final long serialVersionUID = 0L;
       checkByteStringIsUtf8(value);
       title_ = value;
       bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object publisherName_ = "";
+    /**
+     * <code>string publisherName = 9;</code>
+     * @return The publisherName.
+     */
+    public java.lang.String getPublisherName() {
+      java.lang.Object ref = publisherName_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        publisherName_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string publisherName = 9;</code>
+     * @return The bytes for publisherName.
+     */
+    public com.google.protobuf.ByteString
+        getPublisherNameBytes() {
+      java.lang.Object ref = publisherName_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        publisherName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string publisherName = 9;</code>
+     * @param value The publisherName to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPublisherName(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      publisherName_ = value;
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string publisherName = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPublisherName() {
+      publisherName_ = getDefaultInstance().getPublisherName();
+      bitField0_ = (bitField0_ & ~0x00000100);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string publisherName = 9;</code>
+     * @param value The bytes for publisherName to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPublisherNameBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      publisherName_ = value;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
