@@ -11,6 +11,7 @@ type grpcCartServiceClientWrapper struct {
 
 type IGrpcCartServiceClientWrapper interface {
 	GetCartItemByCustomerProto(customerId string) ([]*CartItemProto, error)
+	DeleteCartItemProto(customerId string) error
 }
 
 func NewGrpcCartServiceClientWrapper(grpcCartServiceClient GrpcCartServiceClient) IGrpcCartServiceClientWrapper {
@@ -36,4 +37,19 @@ func (c *grpcCartServiceClientWrapper) GetCartItemByCustomerProto(customerId str
 	}
 
 	return results.Items, nil
+}
+
+func (c *grpcCartServiceClientWrapper) DeleteCartItemProto(customerId string) error {
+	ctx, cancel := c.contextWithTimeout()
+	defer cancel()
+
+	var inputArguments DeleteCartRequestProto
+	inputArguments.CustomerId = customerId
+
+	_, err := c.grpcCartServiceClient.DeleteCartItemProto(ctx, &inputArguments)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

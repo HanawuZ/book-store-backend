@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.29.1
-// source: cart/cart.proto
+// source: cart.proto
 
 package cart
 
@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	GrpcCartService_GetCartItemByCustomerProto_FullMethodName = "/cart.GrpcCartService/GetCartItemByCustomerProto"
+	GrpcCartService_DeleteCartItemProto_FullMethodName        = "/cart.GrpcCartService/DeleteCartItemProto"
 )
 
 // GrpcCartServiceClient is the client API for GrpcCartService service.
@@ -27,6 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GrpcCartServiceClient interface {
 	GetCartItemByCustomerProto(ctx context.Context, in *CartItemRequestProto, opts ...grpc.CallOption) (*CartItemResponseProto, error)
+	DeleteCartItemProto(ctx context.Context, in *DeleteCartRequestProto, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type grpcCartServiceClient struct {
@@ -47,11 +50,22 @@ func (c *grpcCartServiceClient) GetCartItemByCustomerProto(ctx context.Context, 
 	return out, nil
 }
 
+func (c *grpcCartServiceClient) DeleteCartItemProto(ctx context.Context, in *DeleteCartRequestProto, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, GrpcCartService_DeleteCartItemProto_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GrpcCartServiceServer is the server API for GrpcCartService service.
 // All implementations must embed UnimplementedGrpcCartServiceServer
 // for forward compatibility.
 type GrpcCartServiceServer interface {
 	GetCartItemByCustomerProto(context.Context, *CartItemRequestProto) (*CartItemResponseProto, error)
+	DeleteCartItemProto(context.Context, *DeleteCartRequestProto) (*emptypb.Empty, error)
 	mustEmbedUnimplementedGrpcCartServiceServer()
 }
 
@@ -64,6 +78,9 @@ type UnimplementedGrpcCartServiceServer struct{}
 
 func (UnimplementedGrpcCartServiceServer) GetCartItemByCustomerProto(context.Context, *CartItemRequestProto) (*CartItemResponseProto, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCartItemByCustomerProto not implemented")
+}
+func (UnimplementedGrpcCartServiceServer) DeleteCartItemProto(context.Context, *DeleteCartRequestProto) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCartItemProto not implemented")
 }
 func (UnimplementedGrpcCartServiceServer) mustEmbedUnimplementedGrpcCartServiceServer() {}
 func (UnimplementedGrpcCartServiceServer) testEmbeddedByValue()                         {}
@@ -104,6 +121,24 @@ func _GrpcCartService_GetCartItemByCustomerProto_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GrpcCartService_DeleteCartItemProto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCartRequestProto)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GrpcCartServiceServer).DeleteCartItemProto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GrpcCartService_DeleteCartItemProto_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GrpcCartServiceServer).DeleteCartItemProto(ctx, req.(*DeleteCartRequestProto))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GrpcCartService_ServiceDesc is the grpc.ServiceDesc for GrpcCartService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -115,7 +150,11 @@ var GrpcCartService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetCartItemByCustomerProto",
 			Handler:    _GrpcCartService_GetCartItemByCustomerProto_Handler,
 		},
+		{
+			MethodName: "DeleteCartItemProto",
+			Handler:    _GrpcCartService_DeleteCartItemProto_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cart/cart.proto",
+	Metadata: "cart.proto",
 }

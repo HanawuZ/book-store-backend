@@ -2,19 +2,42 @@ package com.example.catalog_svc.app.grpc.cart;
 import java.util.List;
 
 import com.example.catalog_svc.app.cart.models.query.CartItem;
+import com.example.catalog_svc.app.cart.repositories.DeleteCartRepository;
 import com.example.catalog_svc.app.cart.services.GetCartService;
 import com.example.catalog_svc.app.grpc.cart.GrpcCartServiceGrpc.GrpcCartServiceImplBase;
 import com.example.catalog_svc.models.response.BaseResponse;
 
 import net.devh.boot.grpc.server.service.GrpcService;
 import io.grpc.stub.StreamObserver;
+import com.google.protobuf.Empty;
+
 @GrpcService
 public class GrpcCartServiceImpl  extends GrpcCartServiceImplBase {
     
   private GetCartService cartService;
 
-  public GrpcCartServiceImpl(GetCartService cartService) {
+  private DeleteCartRepository deleteCartRepository;
+
+  public GrpcCartServiceImpl(GetCartService cartService, DeleteCartRepository deleteCartRepository) {
     this.cartService = cartService;
+    this.deleteCartRepository = deleteCartRepository;
+  }
+
+  @Override
+  public void deleteCartItemProto(DeleteCartRequestProto request, StreamObserver<Empty> responseObserver) {
+    String customerId = request.getCustomerId();
+    if (customerId.isEmpty()) {
+      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT.asRuntimeException());
+      return;
+    }
+
+    boolean deleted = deleteCartRepository.deleteCartItem(customerId);
+    if (!deleted) {
+      responseObserver.onError(io.grpc.Status.INTERNAL.asRuntimeException());
+      return;
+    }
+
+    responseObserver.onNext(Empty.getDefaultInstance());
   }
 
   @Override
@@ -62,5 +85,5 @@ public class GrpcCartServiceImpl  extends GrpcCartServiceImplBase {
     responseObserver.onNext(responseProto);
     responseObserver.onCompleted();
   }
-    
+
 }

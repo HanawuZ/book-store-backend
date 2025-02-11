@@ -122,6 +122,11 @@ func (s *SaleOrderService) CreateSaleOrder(request models.CreateOrderRequest, cu
 		return &response
 	}
 
+	err = s.GrpcCartServiceClientWrapper.DeleteCartItemProto(customerId)
+	if err != nil {
+		response := httpserve.NewBaseResponse(http.StatusInternalServerError, err.Error(), "")
+		return &response
+	}
 	response := httpserve.NewBaseResponse(http.StatusCreated, "success", "")
 	return &response
 }

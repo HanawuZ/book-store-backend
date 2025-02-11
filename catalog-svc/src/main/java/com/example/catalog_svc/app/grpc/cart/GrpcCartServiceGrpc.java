@@ -6,7 +6,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  */
 @jakarta.annotation.Generated(
     value = "by gRPC proto compiler (version 1.69.1)",
-    comments = "Source: cart/cart.proto")
+    comments = "Source: cart.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class GrpcCartServiceGrpc {
 
@@ -44,6 +44,37 @@ public final class GrpcCartServiceGrpc {
       }
     }
     return getGetCartItemByCustomerProtoMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto,
+      com.google.protobuf.Empty> getDeleteCartItemProtoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DeleteCartItemProto",
+      requestType = com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto.class,
+      responseType = com.google.protobuf.Empty.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto,
+      com.google.protobuf.Empty> getDeleteCartItemProtoMethod() {
+    io.grpc.MethodDescriptor<com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto, com.google.protobuf.Empty> getDeleteCartItemProtoMethod;
+    if ((getDeleteCartItemProtoMethod = GrpcCartServiceGrpc.getDeleteCartItemProtoMethod) == null) {
+      synchronized (GrpcCartServiceGrpc.class) {
+        if ((getDeleteCartItemProtoMethod = GrpcCartServiceGrpc.getDeleteCartItemProtoMethod) == null) {
+          GrpcCartServiceGrpc.getDeleteCartItemProtoMethod = getDeleteCartItemProtoMethod =
+              io.grpc.MethodDescriptor.<com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto, com.google.protobuf.Empty>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "DeleteCartItemProto"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.google.protobuf.Empty.getDefaultInstance()))
+              .setSchemaDescriptor(new GrpcCartServiceMethodDescriptorSupplier("DeleteCartItemProto"))
+              .build();
+        }
+      }
+    }
+    return getDeleteCartItemProtoMethod;
   }
 
   /**
@@ -100,6 +131,13 @@ public final class GrpcCartServiceGrpc {
         io.grpc.stub.StreamObserver<com.example.catalog_svc.app.grpc.cart.CartItemResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetCartItemByCustomerProtoMethod(), responseObserver);
     }
+
+    /**
+     */
+    default void deleteCartItemProto(com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteCartItemProtoMethod(), responseObserver);
+    }
   }
 
   /**
@@ -136,6 +174,14 @@ public final class GrpcCartServiceGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetCartItemByCustomerProtoMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void deleteCartItemProto(com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDeleteCartItemProtoMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -159,6 +205,13 @@ public final class GrpcCartServiceGrpc {
     public com.example.catalog_svc.app.grpc.cart.CartItemResponseProto getCartItemByCustomerProto(com.example.catalog_svc.app.grpc.cart.CartItemRequestProto request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetCartItemByCustomerProtoMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public com.google.protobuf.Empty deleteCartItemProto(com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteCartItemProtoMethod(), getCallOptions(), request);
     }
   }
 
@@ -185,9 +238,18 @@ public final class GrpcCartServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetCartItemByCustomerProtoMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> deleteCartItemProto(
+        com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDeleteCartItemProtoMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_CART_ITEM_BY_CUSTOMER_PROTO = 0;
+  private static final int METHODID_DELETE_CART_ITEM_PROTO = 1;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -209,6 +271,10 @@ public final class GrpcCartServiceGrpc {
         case METHODID_GET_CART_ITEM_BY_CUSTOMER_PROTO:
           serviceImpl.getCartItemByCustomerProto((com.example.catalog_svc.app.grpc.cart.CartItemRequestProto) request,
               (io.grpc.stub.StreamObserver<com.example.catalog_svc.app.grpc.cart.CartItemResponseProto>) responseObserver);
+          break;
+        case METHODID_DELETE_CART_ITEM_PROTO:
+          serviceImpl.deleteCartItemProto((com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto) request,
+              (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -235,6 +301,13 @@ public final class GrpcCartServiceGrpc {
               com.example.catalog_svc.app.grpc.cart.CartItemRequestProto,
               com.example.catalog_svc.app.grpc.cart.CartItemResponseProto>(
                 service, METHODID_GET_CART_ITEM_BY_CUSTOMER_PROTO)))
+        .addMethod(
+          getDeleteCartItemProtoMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              com.example.catalog_svc.app.grpc.cart.DeleteCartRequestProto,
+              com.google.protobuf.Empty>(
+                service, METHODID_DELETE_CART_ITEM_PROTO)))
         .build();
   }
 
@@ -284,6 +357,7 @@ public final class GrpcCartServiceGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new GrpcCartServiceFileDescriptorSupplier())
               .addMethod(getGetCartItemByCustomerProtoMethod())
+              .addMethod(getDeleteCartItemProtoMethod())
               .build();
         }
       }

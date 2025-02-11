@@ -1,0 +1,15 @@
+syntax="proto3";
+
+import "google/protobuf/empty.proto";
+
+option go_package = "./cart";
+
+option java_multiple_files = true;
+option java_package = "com.example.catalog_svc.app.grpc.cart";
+option java_outer_classname = "DeleteCartProto";
+
+package cart;
+
+message DeleteCartRequestProto {
+  string customerId = 1;
+}
