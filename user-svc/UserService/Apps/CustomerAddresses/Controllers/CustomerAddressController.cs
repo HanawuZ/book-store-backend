@@ -25,7 +25,7 @@ namespace UserService.Apps.CustomerAddresses.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        // [Authorize]
         public IActionResult CreateCustomerAddress([FromBody] CreateCustomerAddress request)
         {
             try
@@ -49,7 +49,7 @@ namespace UserService.Apps.CustomerAddresses.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        // [Authorize]
         public IActionResult GetCustomerAddress()
         {
             try

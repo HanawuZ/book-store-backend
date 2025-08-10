@@ -16,11 +16,13 @@ namespace UserService.Apps.CustomerAddresses.Services
 
     public class ConcretedCustomerAddressService: ICustomerAddressService
     {
-        private readonly ICustomerAddressRepository _customerAddressRepository;
+        // private readonly ICustomerAddressRepository _customerAddressRepository;
 
-        public ConcretedCustomerAddressService(ICustomerAddressRepository customerAddressRepository) 
+        public ConcretedCustomerAddressService(
+            // ICustomerAddressRepository customerAddressRepository
+            ) 
         {
-            _customerAddressRepository = customerAddressRepository;
+            // _customerAddressRepository = customerAddressRepository;
         }
 
         public HttpServe<List<CustomerAddress>> GetCustomerAddress(string? customerId)
@@ -32,9 +34,9 @@ namespace UserService.Apps.CustomerAddresses.Services
                     return new HttpServe<List<CustomerAddress>>(StatusCodes.Status400BadRequest, "customer id is empty", null);
                 }
 
-                List<CustomerAddress> customerAddresses = _customerAddressRepository.GetCustomerAddress(customerId);
+                // List<CustomerAddress> customerAddresses = _customerAddressRepository.GetCustomerAddress(customerId);
                 
-                return new HttpServe<List<CustomerAddress>>(StatusCodes.Status200OK, "success", customerAddresses);
+                return new HttpServe<List<CustomerAddress>>(StatusCodes.Status200OK, "success", new List<CustomerAddress>());
             }
             catch
             {
@@ -90,7 +92,8 @@ namespace UserService.Apps.CustomerAddresses.Services
                 //Console.WriteLine(newAddress.Zipcode);
                 //Console.WriteLine(newAddress.IsActive);
 
-                bool completed = _customerAddressRepository.CreateCustomerAddress(newAddress);
+                // bool completed = _customerAddressRepository.CreateCustomerAddress(newAddress);
+                bool completed = true;
                 if (completed) 
                 { 
                     return new HttpServe<string?>(StatusCodes.Status201Created, "เพิ่มข้อมูลที่อยู่สำเร็จ", null);

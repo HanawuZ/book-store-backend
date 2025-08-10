@@ -8759,11 +8759,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\hanaw\\Desktop\\ME\\PROGRAMMING\\Java\\book-store-backend\\user-svc\\UserService\\UserService.csproj",
+      "projectUniqueName": "C:\\Users\\hanaw\\Desktop\\Private\\Programming\\book-store-backend\\user-svc\\UserService\\UserService.csproj",
       "projectName": "UserService",
-      "projectPath": "C:\\Users\\hanaw\\Desktop\\ME\\PROGRAMMING\\Java\\book-store-backend\\user-svc\\UserService\\UserService.csproj",
+      "projectPath": "C:\\Users\\hanaw\\Desktop\\Private\\Programming\\book-store-backend\\user-svc\\UserService\\UserService.csproj",
       "packagesPath": "C:\\Users\\hanaw\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\hanaw\\Desktop\\ME\\PROGRAMMING\\Java\\book-store-backend\\user-svc\\UserService\\obj\\",
+      "outputPath": "C:\\Users\\hanaw\\Desktop\\Private\\Programming\\book-store-backend\\user-svc\\UserService\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "E:\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -8796,7 +8796,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.100"
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net8.0": {
@@ -8874,7 +8874,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -8,10 +8,10 @@ using UserService.Libs.Security;
 using UserService.Configs.Middlewares;
 using UserService.Apps.CustomerAddresses.Repository;
 using UserService.Apps.CustomerAddresses.Services;
-using UserService.Apps.HealthCheck.PingPong;
-using UserService.Apps.CustomerAddresses.Grpc.GrpcCustomerAddressServer;
+// using UserService.Apps.HealthCheck.PingPong;
+// using UserService.Apps.CustomerAddresses.Grpc.GrpcCustomerAddressServer;
 using UserService.Apps.Customer.Repository;
-using UserService.Apps.Customer.Grpc.GrpcCustomerServer;
+// using UserService.Apps.Customer.Grpc.GrpcCustomerServer;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,8 +29,10 @@ builder.Services.AddSwaggerGen();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddLogging();
-builder.Services.AddGrpc();
-builder.Services.AddGrpcReflection();
+
+// Uncomment later
+// builder.Services.AddGrpc();
+// builder.Services.AddGrpcReflection();
 
 builder.Services.AddDbContext<PostgresDatabaseContext>(options =>
     options
@@ -38,15 +40,16 @@ builder.Services.AddDbContext<PostgresDatabaseContext>(options =>
         .UseSnakeCaseNamingConvention()
 );
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(
-       name: "MyAllowSpecificOrigins",
-       policy =>
-       {
-           policy.WithOrigins("http://localhost:5045");       
-       });
-});
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy(
+//        name: "MyAllowSpecificOrigins",
+//        policy =>
+//        {
+//            policy.WithOrigins("http://localhost:5045");       
+//        });
+// });
+builder.Services.AddHealthChecks();
 
 
 builder.Services.AddScoped<IUserService, ConcretedUserService>();
@@ -55,13 +58,13 @@ builder.Services.AddScoped<ICustomerAddressService, ConcretedCustomerAddressServ
 builder.Services.AddScoped<ICustomerAddressRepository, ConcretedCustomerAddressRepository>();
 builder.Services.AddScoped<ICustomerRepository, ConcretedCustomerRepository>();
 builder.Services.AddScoped<IJwtUtility, JwtUtility>();
-builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(JwtBearerMiddleware.ConfigureJwtBearerOptions);
+// builder.Services
+//     .AddAuthentication(options =>
+//     {
+//         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//     })
+//     .AddJwtBearer(JwtBearerMiddleware.ConfigureJwtBearerOptions);
 
 //builder.WebHost.ConfigureKestrel(options =>
 //{
@@ -73,6 +76,7 @@ builder.Services
 //});
 
 var app = builder.Build();
+
 // Test database connection during startup
 using (var scope = app.Services.CreateScope())
 {
@@ -100,16 +104,18 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.MapGrpcReflectionService();
+    // app.MapGrpcReflectionService();
 }
+app.MapHealthChecks("/health");
 
-app.UseHttpsRedirection();
-app.UseCors("MyAllowSpecificOrigins");
-app.UseAuthentication();
-app.UseAuthorization();
+
+// app.UseHttpsRedirection();
+// app.UseCors("MyAllowSpecificOrigins");
+// app.UseAuthentication();
+// app.UseAuthorization();
 app.MapControllers();
-app.MapGrpcService<PingPongGrpcServerImpl>();
-app.MapGrpcService<CustomerAddressServerImpl>();
-app.MapGrpcService<CustomerServerImpl>();
+// app.MapGrpcService<PingPongGrpcServerImpl>();
+// app.MapGrpcService<CustomerAddressServerImpl>();
+// app.MapGrpcService<CustomerServerImpl>();
 
 app.Run();

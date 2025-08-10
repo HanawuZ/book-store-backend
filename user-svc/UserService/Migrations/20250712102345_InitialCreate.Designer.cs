@@ -12,8 +12,8 @@ using UserService.Configs.Databases;
 namespace UserService.Migrations
 {
     [DbContext(typeof(PostgresDatabaseContext))]
-    [Migration("20250201150720_AddCustomerAddress")]
-    partial class AddCustomerAddress
+    [Migration("20250712102345_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
