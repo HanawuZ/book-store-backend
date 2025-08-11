@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 
 namespace UserService.Models.Entities
 {
@@ -7,11 +8,19 @@ namespace UserService.Models.Entities
     public class UserMapping
     {
         [Key]
-        public string Id { get; set; }
+        public required string Id { get; set; }
 
         [Required]
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
 
         public string? CustomerId { get; set; }
+
+
+        public override string ToString()
+        {
+            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var values = properties.Select(p => $"{p.Name}: {p.GetValue(this) ?? "null"}");
+            return $"User: {{ {string.Join(", ", values)} }}";
+        }
     }
 }

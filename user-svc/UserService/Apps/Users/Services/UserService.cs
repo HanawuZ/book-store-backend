@@ -17,15 +17,15 @@ namespace UserService.Apps.Users.Services
     public class ConcretedUserService : IUserService
     {
 
-        // private readonly IUserRepository _userRepository;
+        private readonly IUserRepository _userRepository;
 
         private readonly IJwtUtility _jwtUtility;
 
         public ConcretedUserService(
-            // IUserRepository userRepository,
+            IUserRepository userRepository,
             IJwtUtility jwtUtility)
         {
-            // _userRepository = userRepository;
+            _userRepository = userRepository;
             _jwtUtility = jwtUtility;
 
         }
@@ -70,7 +70,7 @@ namespace UserService.Apps.Users.Services
                     UpdatedDate = currentTime,
                     UpdatedBy = "admin"
                 };
-
+    
                 UserMapping userMapping = new UserMapping
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -78,12 +78,22 @@ namespace UserService.Apps.Users.Services
                     CustomerId = newCustomer.Id,
                 };
 
-                // bool complete = _userRepository.CreateUser(newUser, newCustomer, userMapping);
+                // string jsonStringUser = JsonSerializer.Serialize(newUser);
+                // Console.WriteLine(jsonStringUser);
 
-                // if (complete)
-                // {
-                //     return new HttpServe<string?>(StatusCodes.Status201Created, "สมัครสมาชิกสำเร็จ!", null);
-                // }
+                // string jsonStringCustomer = JsonSerializer.Serialize(newCustomer);
+                // Console.WriteLine(jsonStringCustomer);
+
+                // string jsonStringUserMapping = JsonSerializer.Serialize(userMapping);
+                // Console.WriteLine(jsonStringUserMapping);
+
+
+                bool complete = _userRepository.CreateUser(newUser, newCustomer, userMapping);
+
+                if (complete)
+                {
+                    return new HttpServe<string?>(StatusCodes.Status201Created, "สมัครสมาชิกสำเร็จ!", null);
+                }
 
                 return new HttpServe<string?>(StatusCodes.Status400BadRequest, "อุ๊บ! สมัครสมาชิกไม่สำเร็จ...", null);
 
@@ -101,35 +111,34 @@ namespace UserService.Apps.Users.Services
         {
             try
             {
-                if (String.IsNullOrEmpty(request.UsernameOrEmail))
+                if (string.IsNullOrEmpty(request.UsernameOrEmail))
                 {
                     return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "คุณไม่ได้กรอกชื่อผู้ใช้หรืออีเมล", null);
 
                 }
 
-                if (String.IsNullOrEmpty(request.Password))
+                if (string.IsNullOrEmpty(request.Password))
                 {
                     return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "กรุณากรอกรหัสผ่าน", null);
                 }
 
 
-                // GetUserCustomerQuery? existedUser = _userRepository.GetUserByUsernameOrEmail(request.UsernameOrEmail);
-                // if (existedUser == null)
-                // {
-                //     return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "ไม่พบข้อมูลผู้ใช้", null);
-                // }
+                GetUserCustomerQuery? existedUser = _userRepository.GetUserByUsernameOrEmail(request.UsernameOrEmail);
+                if (existedUser == null)
+                {
+                    return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "ไม่พบข้อมูลผู้ใช้", null);
+                }
 
-                // bool passwordCorrect = BcryptEncoder.ComparePassword(request.Password, existedUser.Password);
-                // if (!passwordCorrect)
-                // {
-                //     return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "รหัสผ่านไม่ถูกต้อง", null);
-                // }
+                bool passwordCorrect = BcryptEncoder.ComparePassword(request.Password, existedUser.Password);
+                if (!passwordCorrect)
+                {
+                    return new HttpServe<SignInResponse?>(StatusCodes.Status400BadRequest, "รหัสผ่านไม่ถูกต้อง", null);
+                }
 
-                // string token = _jwtUtility.GenerateUserToken(existedUser);
-                // SignInResponse response = new SignInResponse { AccessToken = token };
+                string token = _jwtUtility.GenerateUserToken(existedUser);
+                SignInResponse response = new SignInResponse { AccessToken = token };
 
-                return new HttpServe<SignInResponse?>(StatusCodes.Status201Created, "เข้าสู่ระบบสำเร็จ!", null);
-                // return new HttpServe<SignInResponse?>(StatusCodes.Status201Created, "เข้าสู่ระบบสำเร็จ!", response);
+                return new HttpServe<SignInResponse?>(StatusCodes.Status201Created, "เข้าสู่ระบบสำเร็จ!", response);
             }
             catch (Exception ex)
             {

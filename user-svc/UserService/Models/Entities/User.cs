@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace UserService.Models.Entities
 {
@@ -8,17 +9,21 @@ namespace UserService.Models.Entities
     {
         [Key]
         [Column("id")]
-        public string Id { get; set; }
-        public string Username { get; set; }
+        public required string Id { get; set; }
 
-        public string Password { get; set; }
+        [Required]
+        public required string Username { get; set; }
+
+        [Required]
+        public required string Password { get; set; }
 
         [Column("profile_picture")]
         public string? ProfilePicture { get; set; }
 
 
         [Column("email")]
-        public string Email { get; set; }
+        [Required]
+        public required string Email { get; set; }
 
         [Column("account_non_expired")]
         public bool AccountNonExpired { get; set; }
@@ -46,10 +51,18 @@ namespace UserService.Models.Entities
 
         public DateTime CreatedDate { get; set; }
 
-        public string CreatedBy { get; set; }
+        public required string CreatedBy { get; set; }
 
         public DateTime UpdatedDate { get; set; }
 
-        public string UpdatedBy { get; set; }
+        public required string UpdatedBy { get; set; }
+
+        
+        public override string ToString()
+        {
+            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var values = properties.Select(p => $"{p.Name}: {p.GetValue(this) ?? "null"}");
+            return $"User: {{ {string.Join(", ", values)} }}";
+        }
     }
 }

@@ -30,22 +30,36 @@ namespace UserService.Configs.Middlewares {
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
 
-            string errorMessage = $"Internal server error: {context.Exception.ToString()}";
+            string errorMessage = $"Internal server error: {context.Exception.Message}";
 
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
             HttpServe<string?> errResponse = new HttpServe<string?>(StatusCodes.Status500InternalServerError, errorMessage, null);
 
-            return context.Response.WriteAsync(JsonSerializer.Serialize(errResponse));
+            return context.Response.WriteAsync(JsonSerializer.Serialize(errResponse, options));
         }
 
         private static Task HandleChallenge(JwtBearerChallengeContext context)
         {
+            
             context.HandleResponse();
             context.Response.StatusCode = 401;
             context.Response.ContentType = "application/json";
-            string errorMessage = $"Unauthorized: {context.Error}";
+
+            string? authorizationHeader = context.Request.Headers.Authorization;            
+            
+            string errorMessage = "Unauthorized: ";
+            if (authorizationHeader.IsNullOrEmpty())
+            {
+                errorMessage += "No token found.";
+            }
+            else
+            {
+                errorMessage += "";
+            }
             HttpServe<string?> errResponse = new HttpServe<string?>(StatusCodes.Status401Unauthorized, errorMessage, null);
 
-            return context.Response.WriteAsync(JsonSerializer.Serialize(errResponse));
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            return context.Response.WriteAsync(JsonSerializer.Serialize(errResponse, options));
         }
 
     }

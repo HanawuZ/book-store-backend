@@ -26,17 +26,17 @@ namespace UserService.Apps.Users.Controllers
         {
             try
             {
-                HttpServe<string> response = _userService.SignUp(request);
+                HttpServe<string?> response = _userService.SignUp(request);
                 if (response.Status != StatusCodes.Status201Created)
                 {
                     return BadRequest(response);
                 }
 
-                return Created(String.Empty, response);
+                return Created(string.Empty, response);
             }
             catch (Exception ex)
             {
-                HttpServe<string> errResponse = new HttpServe<string>(StatusCodes.Status500InternalServerError, ex.Message, null);
+                HttpServe<string?> errResponse = new HttpServe<string?>(StatusCodes.Status500InternalServerError, ex.Message, null);
                 return StatusCode(StatusCodes.Status500InternalServerError, errResponse);
             }
 

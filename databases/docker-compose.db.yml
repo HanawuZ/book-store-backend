@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+ user_svc_db:
+    container_name: user_svc_db
+    
+    image: postgres
+    
+    restart: always
+    
+    environment:
+      POSTGRES_PASSWORD: example2
+      POSTGRES_DB: bookshop-user
+      POSTGRES_USER: user2
+    
+    volumes:
+      - pgdata2:/var/lib/postgresql/data
+    
+    # Map local machine port to Container port
+    # Localhost:5431 => Container:5432
+    ports:
+      - "5431:5432"
+    
+    # Health check the database
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user2", "-h", "localhost", "-p", "5432", "-d", "bookshop-user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+    networks:
+      - bookshop-network
+
+volumes:
+  pgdata2:
+
+networks:
+  bookshop-network:
+    external: true

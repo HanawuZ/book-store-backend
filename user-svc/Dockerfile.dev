@@ -1,0 +1,21 @@
+# Use SDK image so we can build & watch
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS dev
+
+WORKDIR /src
+
+# Copy csproj first to restore dependencies
+COPY ["UserService/UserService.csproj", "UserService/"]
+RUN dotnet clean "UserService/UserService.csproj"
+RUN dotnet restore "UserService/UserService.csproj"
+
+# Copy the rest of the source
+COPY . .
+
+WORKDIR "/src/UserService"
+
+# Expose port
+EXPOSE 5045
+ENV ASPNETCORE_URLS=http://+:5045
+
+# Run with hot reload
+ENTRYPOINT ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:5045"]

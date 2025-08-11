@@ -42,7 +42,7 @@ namespace UserService.Apps.CustomerAddresses.Controllers
             }
             catch (Exception ex)
             {
-                HttpServe<string> errResponse = new HttpServe<string>(StatusCodes.Status500InternalServerError, ex.Message, null);
+                HttpServe<string?> errResponse = new HttpServe<string?>(StatusCodes.Status500InternalServerError, ex.Message, null);
                 return StatusCode(StatusCodes.Status500InternalServerError, errResponse);
 
             }

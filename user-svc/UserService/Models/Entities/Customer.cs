@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 
 namespace UserService.Models.Entities
 {
@@ -35,5 +36,13 @@ namespace UserService.Models.Entities
         public required string UpdatedBy { get; set; }
 
         public ICollection<CustomerAddress> CustomerAddresses { get; set; }
+
+        public override string ToString()
+        {
+            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var values = properties.Select(p => $"{p.Name}: {p.GetValue(this) ?? "null"}");
+            return $"User: {{ {string.Join(", ", values)} }}";
+        }
+
     }
 }

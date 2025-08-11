@@ -13,7 +13,7 @@ using UserService.Apps.CustomerAddresses.Services;
 using UserService.Apps.Customer.Repository;
 // using UserService.Apps.Customer.Grpc.GrpcCustomerServer;
 
-
+Console.WriteLine("======= RUN User Service APP =======");
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -58,13 +58,14 @@ builder.Services.AddScoped<ICustomerAddressService, ConcretedCustomerAddressServ
 builder.Services.AddScoped<ICustomerAddressRepository, ConcretedCustomerAddressRepository>();
 builder.Services.AddScoped<ICustomerRepository, ConcretedCustomerRepository>();
 builder.Services.AddScoped<IJwtUtility, JwtUtility>();
-// builder.Services
-//     .AddAuthentication(options =>
-//     {
-//         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//     })
-//     .AddJwtBearer(JwtBearerMiddleware.ConfigureJwtBearerOptions);
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(JwtBearerMiddleware.ConfigureJwtBearerOptions);
+builder.Services.AddAuthorization();
 
 //builder.WebHost.ConfigureKestrel(options =>
 //{
@@ -93,10 +94,10 @@ using (var scope = app.Services.CreateScope())
     {
         Console.WriteLine($"Database connection failed: {ex.Message}");
     } 
-    finally
-    {
-        dbContext.Database.CloseConnection();
-    }
+    // finally
+    // {
+    //     dbContext.Database.CloseConnection();
+    // }
 }
 
 // Configure the HTTP request pipeline.
@@ -111,8 +112,8 @@ app.MapHealthChecks("/health");
 
 // app.UseHttpsRedirection();
 // app.UseCors("MyAllowSpecificOrigins");
-// app.UseAuthentication();
-// app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 // app.MapGrpcService<PingPongGrpcServerImpl>();
 // app.MapGrpcService<CustomerAddressServerImpl>();

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace UserService.Models.Entities
 {
@@ -9,17 +10,17 @@ namespace UserService.Models.Entities
         [Key]
         [Column("id")]
         [Required]
-        public string Id { get; set; }
+        public required string Id { get; set; }
 
         [Column("customer_id")]
         [Required]
-        public string CustomerId { get; set; }
+        public required string CustomerId { get; set; }
 
         public Customer Customer { get; set; }
 
         [Column("address")]
         [Required]
-        public string Address { get; set; }
+        public required string Address { get; set; }
 
         [Column("latitude")]
         [Required]
@@ -57,7 +58,7 @@ namespace UserService.Models.Entities
 
         [Column("created_by")]
         [Required]
-        public string CreatedBy { get; set; }
+        public required string CreatedBy { get; set; }
 
         [Column("updated_date")]
         [Required]
@@ -65,7 +66,14 @@ namespace UserService.Models.Entities
 
         [Column("updated_by")]
         [Required]
-        public string UpdatedBy { get; set; }
-     }
+        public required string UpdatedBy { get; set; }
+
+        public override string ToString()
+        {
+            var properties = GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var values = properties.Select(p => $"{p.Name}: {p.GetValue(this) ?? "null"}");
+            return $"User: {{ {string.Join(", ", values)} }}";
+        }
+    }
 
 }
