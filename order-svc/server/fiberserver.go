@@ -3,9 +3,11 @@ package server
 import (
 	"context"
 	"log"
+	"net"
 	"os/signal"
 	"syscall"
 
+	pingpong "github.com/HanawuZ/book-store-backend/order-svc/app/grpc/health"
 	"github.com/HanawuZ/book-store-backend/order-svc/config"
 	"github.com/HanawuZ/book-store-backend/order-svc/config/databases"
 	"github.com/HanawuZ/book-store-backend/order-svc/config/logger"
@@ -14,10 +16,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
 )
 
 type Server struct {
 	App                                *fiber.App
+	GrpcServer                         *grpc.Server
 	Config                             *config.AppConfig
 	Database                           databases.IDatabase
 	AuthMiddleware                     authorization.IAuthorizationMiddleware
@@ -50,6 +54,10 @@ func (s *Server) Setup(config *config.AppConfig) {
 	}
 
 	s.App.Use(logger.NewFiberLogger())
+
+	s.GrpcServer = grpc.NewServer()
+
+	pingpong.RegisterPingPongServer(s.GrpcServer, pingpong.NewPingPongServer())
 
 	grpcCatalogServiceClientConnection, err := grpc.NewClient("localhost:9090", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -89,6 +97,17 @@ func (s *Server) Start() {
 		}
 	}()
 
+	listener, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatal(err)
+	}
+	reflection.Register(s.GrpcServer)
+	go func() {
+		if err := s.GrpcServer.Serve(listener); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
 	<-ctx.Done()
 
 	log.Println("got interruption signal.")
@@ -102,6 +121,8 @@ func (s *Server) Start() {
 		log.Printf("grpc user service client connection shutdown returned an err: %v\n", err)
 	}
 	log.Println("gracefully closed grpc user svc client connection.")
+
+	s.GrpcServer.GracefulStop()
 
 	if err := s.App.ShutdownWithContext(context.TODO()); err != nil {
 		log.Printf("server shutdown returned an err: %v\n", err)

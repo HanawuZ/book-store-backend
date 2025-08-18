@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using UserService.Apps.Users.Models.Queries;
 using UserService.Models.Entities;
@@ -16,16 +17,40 @@ namespace UserService.Libs.Security
     }
     public class JwtUtility: IJwtUtility
     {
-        private readonly string SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+        private readonly string secretKey;
+        private readonly string issuer;
+        private readonly IConfiguration _configuration;
 
-        public JwtUtility() 
+        public JwtUtility(IConfiguration configuration) 
         { 
+            try
+            {
+                _configuration = configuration;
+                if (_configuration["Jwt:Key"].IsNullOrEmpty())
+                {
+                    throw new Exception("secret key is empty");
+                }
+                secretKey = _configuration["Jwt:Key"]!;
+
+                if (_configuration["Jwt:Issuer"].IsNullOrEmpty())
+                {
+                    throw new Exception("issuer is empty.");
+                }
+
+                issuer = _configuration["Jwt:Issuer"]!;
+            } 
+            catch
+            {
+                throw;
+            }
+
         }
 
         public string GenerateUserToken(GetUserCustomerQuery user)
         {
+
             var tokenHandler = new JwtSecurityTokenHandler();
-            byte[] securityKey = Encoding.ASCII.GetBytes(SECRET);
+            byte[] securityKey = Encoding.ASCII.GetBytes(secretKey);
             var credentials = new SigningCredentials(
                 new SymmetricSecurityKey(securityKey),
                 SecurityAlgorithms.HmacSha256Signature
@@ -37,7 +62,7 @@ namespace UserService.Libs.Security
             claim.AddClaim(new Claim("customer_id", user.CustomerId));
             claim.AddClaim(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
-            DateTime expiredTime = DateTime.Now.AddMinutes(120);
+            DateTime expiredTime = DateTime.Now.AddMinutes(240);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+ order_svc_db:
+ 
+    container_name: order_svc_db
+    
+    image: mysql
+    
+    restart: always
+    
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: bookshop-order
+      MYSQL_USER: user3
+      MYSQL_PASSWORD: example3
+    
+    volumes:
+      - mysqldb:/var/lib/mysql
+
+    # Map local machine port to Container port
+    # Localhost:3307 => Container:3306
+    ports:
+      - "3307:3306"
+    
+volumes:
+  mysqldb:

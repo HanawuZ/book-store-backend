@@ -8,11 +8,14 @@ namespace UserService.Configs.Middlewares {
     
     public class JwtBearerMiddleware
     {
-        public static void ConfigureJwtBearerOptions(JwtBearerOptions options)
+
+        public static void ConfigureJwtBearerOptions(JwtBearerOptions options, IConfiguration configuration)
         {
+            var secretKey = configuration["Jwt:Key"];
+
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437")),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey)),
                 ValidateIssuer = false,
                 ValidateAudience = false
             };

@@ -11,6 +11,8 @@ using UserService.Apps.CustomerAddresses.Services;
 // using UserService.Apps.HealthCheck.PingPong;
 // using UserService.Apps.CustomerAddresses.Grpc.GrpcCustomerAddressServer;
 using UserService.Apps.Customer.Repository;
+using Microsoft.Extensions.Options;
+using Google.Protobuf.WellKnownTypes;
 // using UserService.Apps.Customer.Grpc.GrpcCustomerServer;
 
 Console.WriteLine("======= RUN User Service APP =======");
@@ -64,7 +66,7 @@ builder.Services
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-    .AddJwtBearer(JwtBearerMiddleware.ConfigureJwtBearerOptions);
+    .AddJwtBearer(options => JwtBearerMiddleware.ConfigureJwtBearerOptions(options, builder.Configuration));
 builder.Services.AddAuthorization();
 
 //builder.WebHost.ConfigureKestrel(options =>

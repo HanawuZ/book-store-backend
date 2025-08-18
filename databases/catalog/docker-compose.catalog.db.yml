@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+ catalog_svc_db:
+    container_name: catalog_svc_db
+    
+    image: postgres
+    
+    restart: always
+    
+    environment:
+      POSTGRES_PASSWORD: example1
+      POSTGRES_DB: bookshop-catalog
+      POSTGRES_USER: user1
+    
+    volumes:
+      - pgdata2:/var/lib/postgresql/data
+    
+    # Map local machine port to Container port
+    # Localhost:5433 => Container:5432
+    ports:
+      - "5433:5432"
+    
+    # Health check the database
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user1", "-h", "localhost", "-p", "5432", "-d", "bookshop-catalog"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+    networks:
+      - bookshop-network
+
+volumes:
+  pgdata2:
+
+networks:
+  bookshop-network:
+    external: true

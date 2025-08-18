@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using UserService.Apps.CustomerAddresses.Models.Requests;
 using UserService.Configs.Databases;
 using UserService.Models.Entities;
 
@@ -11,6 +13,9 @@ namespace UserService.Apps.CustomerAddresses.Repository
         public CustomerAddress? GetCustomerAddressById(string customerAddressId);
 
         public bool CreateCustomerAddress(CustomerAddress customerAddress);
+
+        public bool UpdateCustomerAddress(CustomerAddress customerAddress);
+
     }
 
     public class ConcretedCustomerAddressRepository: ICustomerAddressRepository
@@ -76,6 +81,26 @@ namespace UserService.Apps.CustomerAddresses.Repository
                 throw;
             }
         }
+
+        public bool UpdateCustomerAddress(CustomerAddress customerAddress)
+        {
+            try
+            {
+                var transaction = _dbContext.Database.BeginTransaction();
+
+                _dbContext.CustomerAddresses.Update(customerAddress);
+                _dbContext.SaveChanges();
+
+                transaction.Commit();
+                return true;
+
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
 
     }
 }

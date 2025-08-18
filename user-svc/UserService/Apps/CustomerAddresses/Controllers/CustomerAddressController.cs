@@ -25,7 +25,7 @@ namespace UserService.Apps.CustomerAddresses.Controllers
         }
 
         [HttpPost]
-        // [Authorize]
+        [Authorize]
         public IActionResult CreateCustomerAddress([FromBody] CreateCustomerAddress request)
         {
             try
@@ -48,8 +48,31 @@ namespace UserService.Apps.CustomerAddresses.Controllers
             }
         }
 
+        [HttpPut]
+        [Authorize]
+        public IActionResult UpdateCustomerAddress([FromBody] CreateCustomerAddress request)
+        {
+            try
+            {
+                HttpServe<string?> response = _customerAddressService.UpdateCustomerAddress(request);
+                if (response.Status != StatusCodes.Status200OK)
+                {
+                    return BadRequest(response);
+                }
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                HttpServe<string?> errResponse = new HttpServe<string?>(StatusCodes.Status500InternalServerError, ex.Message, null);
+                return StatusCode(StatusCodes.Status500InternalServerError, errResponse);
+
+            }
+        }
+
+
         [HttpGet]
-        // [Authorize]
+        [Authorize]
         public IActionResult GetCustomerAddress()
         {
             try

@@ -1,4 +1,5 @@
-﻿using UserService.Apps.CustomerAddresses.Models.Requests;
+﻿using Microsoft.IdentityModel.Tokens;
+using UserService.Apps.CustomerAddresses.Models.Requests;
 using UserService.Apps.CustomerAddresses.Repository;
 using UserService.Apps.Users.Models.Requests;
 using UserService.Apps.Users.Models.Responses;
@@ -12,17 +13,16 @@ namespace UserService.Apps.CustomerAddresses.Services
         public HttpServe<List<CustomerAddress>> GetCustomerAddress(string? customerId);
 
         public HttpServe<string?> CreateCustomerAddress(string? customerId, CreateCustomerAddress customerAddress);
+        public HttpServe<string?> UpdateCustomerAddress(CreateCustomerAddress updatedCustomerAddress);
     }
 
     public class ConcretedCustomerAddressService: ICustomerAddressService
     {
-        // private readonly ICustomerAddressRepository _customerAddressRepository;
+         private readonly ICustomerAddressRepository _customerAddressRepository;
 
-        public ConcretedCustomerAddressService(
-            // ICustomerAddressRepository customerAddressRepository
-            ) 
+        public ConcretedCustomerAddressService(ICustomerAddressRepository customerAddressRepository) 
         {
-            // _customerAddressRepository = customerAddressRepository;
+             _customerAddressRepository = customerAddressRepository;
         }
 
         public HttpServe<List<CustomerAddress>> GetCustomerAddress(string? customerId)
@@ -31,12 +31,12 @@ namespace UserService.Apps.CustomerAddresses.Services
             {
                 if (String.IsNullOrEmpty(customerId)) 
                 { 
-                    return new HttpServe<List<CustomerAddress>>(StatusCodes.Status400BadRequest, "customer id is empty", null);
+                    return new HttpServe<List<CustomerAddress>>(StatusCodes.Status400BadRequest, "customer id is empty", []);
                 }
 
-                // List<CustomerAddress> customerAddresses = _customerAddressRepository.GetCustomerAddress(customerId);
+                 List<CustomerAddress> customerAddresses = _customerAddressRepository.GetCustomerAddress(customerId);
                 
-                return new HttpServe<List<CustomerAddress>>(StatusCodes.Status200OK, "success", new List<CustomerAddress>());
+                return new HttpServe<List<CustomerAddress>>(StatusCodes.Status200OK, "success", customerAddresses);
             }
             catch
             {
@@ -92,8 +92,7 @@ namespace UserService.Apps.CustomerAddresses.Services
                 //Console.WriteLine(newAddress.Zipcode);
                 //Console.WriteLine(newAddress.IsActive);
 
-                // bool completed = _customerAddressRepository.CreateCustomerAddress(newAddress);
-                bool completed = true;
+                bool completed = _customerAddressRepository.CreateCustomerAddress(newAddress);
                 if (completed) 
                 { 
                     return new HttpServe<string?>(StatusCodes.Status201Created, "เพิ่มข้อมูลที่อยู่สำเร็จ", null);
@@ -101,6 +100,86 @@ namespace UserService.Apps.CustomerAddresses.Services
 
                 return new HttpServe<string?>(StatusCodes.Status400BadRequest, "ไม่สามารถเพิ่มข้อมูลที่อยู่ได้", null);
 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public HttpServe<string?> UpdateCustomerAddress(CreateCustomerAddress updatedCustomerAddress)
+        {
+            try
+            {
+                string? errorMessage = ValidateCustomerAddress(updatedCustomerAddress);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, errorMessage, null);
+
+                }
+
+                if (updatedCustomerAddress.Id.IsNullOrEmpty())
+                {
+                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, "customer address id is empty.", null);
+                }
+
+                CustomerAddress? address = _customerAddressRepository.GetCustomerAddressById(updatedCustomerAddress.Id);
+                if (address == null) 
+                {
+                    return new HttpServe<string?>(StatusCodes.Status400BadRequest, "customer address not found.", null);
+                }
+
+                if (address.Address != updatedCustomerAddress.Address)
+                {
+                    address.Address = updatedCustomerAddress.Address;
+                }
+
+                if (address.Latitude != updatedCustomerAddress.Latitude)
+                {
+                    address.Latitude = updatedCustomerAddress.Latitude;
+                }
+
+                if (address.Longitude != updatedCustomerAddress.Longitude) 
+                { 
+                    address.Longitude = updatedCustomerAddress.Longitude;
+                }
+
+                if (address.Street != updatedCustomerAddress.Street) 
+                { 
+                    address.Street = updatedCustomerAddress.Street;
+                }
+
+                if (address.SubDistrict != updatedCustomerAddress.SubDistrict) 
+                { 
+                    address.SubDistrict = updatedCustomerAddress.SubDistrict;
+                }
+
+                if (address.District != updatedCustomerAddress.District) 
+                { 
+                    address.District = updatedCustomerAddress.District;
+                }
+
+                if (address.Province != updatedCustomerAddress.Province) 
+                {
+                    address.Province = updatedCustomerAddress.Province; 
+                }
+
+                if (address.Zipcode != updatedCustomerAddress.Zipcode) 
+                { 
+                    address.Zipcode = updatedCustomerAddress.Zipcode;
+                }
+
+
+                address.UpdatedDate = DateTime.UtcNow;
+                address.UpdatedBy = "admin update";
+
+                bool completed = _customerAddressRepository.UpdateCustomerAddress(address);
+                if (completed)
+                {
+                    return new HttpServe<string?>(StatusCodes.Status200OK, "แก้ไขข้อมูลที่อยู่สำเร็จ", null);
+                }
+
+                return new HttpServe<string?>(StatusCodes.Status400BadRequest, "ไม่สามารถแก้ไขข้อมูลที่อยู่ได้", null);
             }
             catch (Exception ex)
             {

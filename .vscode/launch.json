@@ -1,6 +1,13 @@
 {
     "configurations": [
         {
+            "type": "java",
+            "name": "CatalogSvcApplication",
+            "request": "launch",
+            "mainClass": "com.example.catalog_svc.CatalogSvcApplication",
+            "projectName": "catalog-svc"
+        },
+        {
             "name": "Containers: .NET Launch",
             "type": "docker",
             "request": "launch",

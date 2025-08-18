@@ -46,8 +46,8 @@ func SetupSaleOrderRoutes(
 
 	router.
 		Use(authMiddleware.AuthorizationCustomerToken()).
-		Post("/sale-order", saleOrderController.CreateSaleOrder)
-
+		Post("/sale-order", saleOrderController.CreateSaleOrder).
+		Get("/summary-order", saleOrderController.SummaryOrder)
 	router.Put("/sale-order", func(c *fiber.Ctx) error {
 		return c.SendString("PUT Hello, World!, sale-order")
 	})

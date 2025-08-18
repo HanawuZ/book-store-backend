@@ -4,6 +4,9 @@ namespace UserService.Apps.CustomerAddresses.Models.Requests
 {
     public class CreateCustomerAddress
     {
+        [JsonPropertyName("id")]
+        public string? Id { get; set; }
+
         [JsonPropertyName("address")]
         public required string Address { get; set; }
 
